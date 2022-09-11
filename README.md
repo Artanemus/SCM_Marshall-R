@@ -19,7 +19,7 @@ If you are interested in following a developer's blog and track my progress then
 
 ---
 
-### USING BMAC
+### USING MARSHALL
 
 After install, by default, an icon is placed on the desktop. If you elected to disable this, type **mars** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
 
