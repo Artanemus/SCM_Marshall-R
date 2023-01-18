@@ -19,6 +19,12 @@ If you are interested in following a developer's blog and track my progress then
 
 ---
 
+## INFORMATION
+
+### THE CODE
+
+SCM_Marshall is written in Delphi, using Embarcadero's RAD Studio, version 10.4.2. This is a FMX project. Code is vanilla. No special VCL components have been used. FireDAC, which is included in the RAD studio enterprise edition, is used for database connectivity. It connects to Microsoft's SQL EXPRESS. Deployment of the application is with INNO. The deployment folder hasn't been included - I didn't want to cluttering up the repository. FYI: Database design was done in ERStudio.
+
 ### USING MARSHALL
 
 After install, by default, an icon is placed on the desktop. If you elected to disable this, type **mars** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
