@@ -8,7 +8,8 @@ uses
   dlgSCMOptions in 'dlgSCMOptions.pas' {scmOptions},
   dlgSCMStopWatch in 'dlgSCMStopWatch.pas' {scmStopWatch},
   dlgSCMNominate in 'dlgSCMNominate.pas' {SCMNominate},
-  dmSCMNom in 'dmSCMNom.pas' {scmNom: TDataModule};
+  dmSCMNom in 'dmSCMNom.pas' {scmNom: TDataModule},
+  SCMExeInfo in 'SCMExeInfo.pas';
 
 {$R *.res}
 

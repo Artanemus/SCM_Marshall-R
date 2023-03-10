@@ -1,5 +1,4 @@
 object SCM: TSCM
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 607
   Width = 420
@@ -767,5 +766,20 @@ object SCM: TSCM
         ParamType = ptInput
         Value = Null
       end>
+  end
+  object qrySCMSystem: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = scmConnection
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'SELECT * FROM SCMSystem WHERE SCMSystemID = 1;')
+    Left = 248
+    Top = 264
+  end
+  object dsSCMSystem: TDataSource
+    DataSet = qrySCMSystem
+    Left = 248
+    Top = 320
   end
 end
