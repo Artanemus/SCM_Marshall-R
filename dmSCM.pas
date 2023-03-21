@@ -125,8 +125,8 @@ type
     procedure FilterClosedSessions(HideClosedSessions: Boolean);
     procedure SimpleMakeTemporyFDConnection(Server, User, Password: String;
       OsAuthent: Boolean);
-    procedure SimpleSaveSettingString(Section, Name, Value: String);
-    procedure SimpleLoadSettingString(Section, Name: String; var Value: String);
+    procedure SimpleSaveSettingString(ASection, AName, AValue: String);
+    procedure SimpleLoadSettingString(ASection, AName: String; var AValue: String);
 
     property IsActive: Boolean read FIsActive;
     property FlagLane: Boolean read FFlagLane write SetFlagLane;
@@ -427,8 +427,7 @@ begin
   FFlagLane := Value;
 end;
 
-procedure TSCM.SimpleLoadSettingString(Section, Name: String;
-  var Value: String);
+procedure TSCM.SimpleLoadSettingString(ASection, AName: String; var AValue: String);
 var
   ini: TIniFile;
 begin
@@ -440,7 +439,7 @@ begin
   ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
     SCMCONFIGFILENAME);
   try
-    Value := ini.ReadString(Section, Name, '');
+    AValue := ini.ReadString(ASection, AName, '');
   finally
     ini.Free;
   end;
@@ -467,7 +466,7 @@ end;
 procedure TSCM.SimpleMakeTemporyFDConnection(Server, User, Password: String;
   OsAuthent: Boolean);
 var
-  Value, Section: String;
+  AValue, ASection, AName: String;
 begin
 
   if (scmConnection.Connected) then
@@ -480,10 +479,10 @@ begin
   scmConnection.Params.Add('User_name=' + User);
   scmConnection.Params.Add('Password=' + Password);
   if OsAuthent then
-    Value := 'Yes'
+    AValue := 'Yes'
   else
-    Value := 'No';
-  scmConnection.Params.Add('OSAuthent=' + Value);
+    AValue := 'No';
+  scmConnection.Params.Add('OSAuthent=' + AValue);
   scmConnection.Params.Add('Mars=yes');
   scmConnection.Params.Add('MetaDefSchema=dbo');
   scmConnection.Params.Add('ExtendedMetadata=False');
@@ -493,27 +492,27 @@ begin
   // ON SUCCESS - Save connection details.
   if scmConnection.Connected Then
   begin
-    Section := 'MSSQL_SwimClubMeet';
-    Name := 'Server';
-    SimpleSaveSettingString(Section, Name, Server);
-    Name := 'User';
-    SimpleSaveSettingString(Section, Name, User);
-    Name := 'Password';
-    SimpleSaveSettingString(Section, Name, Password);
-    Name := 'OSAuthent';
-    SimpleSaveSettingString(Section, Name, Value);
+    ASection := 'MSSQL_SwimClubMeet';
+    AName := 'Server';
+    SimpleSaveSettingString(ASection, AName, Server);
+    AName := 'User';
+    SimpleSaveSettingString(ASection, AName, User);
+    AName := 'Password';
+    SimpleSaveSettingString(ASection, AName, Password);
+    AName := 'OSAuthent';
+    SimpleSaveSettingString(ASection, AName, AValue);
   end
 
 end;
 
-procedure TSCM.SimpleSaveSettingString(Section, Name, Value: String);
+procedure TSCM.SimpleSaveSettingString(ASection, AName, AValue: String);
 var
   ini: TIniFile;
 begin
   ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
     SCMCONFIGFILENAME);
   try
-    ini.WriteString(Section, Name, Value);
+    ini.WriteString(ASection, AName, AValue);
   finally
     ini.Free;
   end;

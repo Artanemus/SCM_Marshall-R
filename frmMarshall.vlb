@@ -305,3 +305,21 @@ Coordinates=856,1014,95,33
 [layPostQualifyStatus]
 Coordinates=844,1073,117,33
 
+[SCM.tblSwimClub]
+Visible=False
+
+[SCM.qryEntrant]
+Visible=False
+
+[SCM.qrySession]
+Visible=False
+
+[SCM.qryHeat]
+Visible=False
+
+[SCM.qryEvent]
+Visible=False
+
+[SCM.qryLane]
+Visible=False
+

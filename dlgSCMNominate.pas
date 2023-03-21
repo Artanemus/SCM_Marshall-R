@@ -145,7 +145,7 @@ begin
   if fToogleName > 2 then
     fToogleName := 1;
 
-  // changing the index name can result in a list re-paint
+  // changing the indexname can result in a list re-paint
   // NOTE: Both refresh and locate ALSO toogle controls enabled state
   qryQuickPick.DisableControls;
 
