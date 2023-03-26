@@ -9,7 +9,9 @@ uses
   dlgSCMStopWatch in 'dlgSCMStopWatch.pas' {scmStopWatch},
   dlgSCMNominate in 'dlgSCMNominate.pas' {SCMNominate},
   dmSCMNom in 'dmSCMNom.pas' {scmNom: TDataModule},
-  SCMExeInfo in 'SCMExeInfo.pas';
+  SCMUtility in '..\SCM_SHARED\SCMUtility.pas',
+  SCMSimpleConnect in '..\SCM_SHARED\SCMSimpleConnect.pas',
+  exeinfo in '..\SCM_SHARED\exeinfo.pas';
 
 {$R *.res}
 

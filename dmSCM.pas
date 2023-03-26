@@ -123,10 +123,10 @@ type
     function GetDBVerInfo: string;
 
     procedure FilterClosedSessions(HideClosedSessions: Boolean);
-    procedure SimpleMakeTemporyFDConnection(Server, User, Password: String;
-      OsAuthent: Boolean);
-    procedure SimpleSaveSettingString(ASection, AName, AValue: String);
-    procedure SimpleLoadSettingString(ASection, AName: String; var AValue: String);
+//    procedure SimpleMakeTemporyFDConnection(Server, User, Password: String;
+//      OsAuthent: Boolean);
+//    procedure SimpleSaveSettingString(ASection, AName, AValue: String);
+//    procedure SimpleLoadSettingString(ASection, AName: String; var AValue: String);
 
     property IsActive: Boolean read FIsActive;
     property FlagLane: Boolean read FFlagLane write SetFlagLane;
@@ -420,13 +420,14 @@ begin
 
 end;
 
-{$REGION 'SIMPLE TEMPORY CONNECTION AND INIFILES CONFIGURATION'}
-
 procedure TSCM.SetFlagLane(Value: Boolean);
 begin
   FFlagLane := Value;
 end;
 
+
+{$REGION 'SIMPLE TEMPORY CONNECTION AND INIFILES CONFIGURATION'}
+{
 procedure TSCM.SimpleLoadSettingString(ASection, AName: String; var AValue: String);
 var
   ini: TIniFile;
@@ -518,6 +519,7 @@ begin
   end;
 
 end;
+}
 {$ENDREGION}
 
 end.
