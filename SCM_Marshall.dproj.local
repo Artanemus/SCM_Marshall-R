@@ -2,10 +2,11 @@
 <BorlandProject>
 	<ActiveMobileDevice>
 		<NoProfile iOSSimulator="iPhone5"/>
-	</ActiveMobileDevice>  <Transactions>
-    <Transaction>2023/03/26 10:56:06.767,=C:\Users\Ben\Documents\GitHub\SCM_SHARED\SCMUtility.pas</Transaction>
-    <Transaction>2023/03/26 10:56:06.815,=C:\Users\Ben\Documents\GitHub\SCM_SHARED\SCMSimpleConnect.pas</Transaction>
-    <Transaction>2023/03/26 10:56:06.879,=C:\Users\Ben\Documents\GitHub\SCM_SHARED\exeinfo.pas</Transaction>
-    <Transaction>2023/03/26 10:56:25.811,C:\Users\Ben\Documents\GitHub\SCM_Marshall-R\SCMExeInfo.pas=</Transaction>
+	</ActiveMobileDevice>
+	<Transactions>
+    <Transaction>2023/03/26 10:56:06.000.815,=C:\Users\Ben\Documents\GitHub\SCM_SHARED\SCMSimpleConnect.pas</Transaction>
+    <Transaction>2023/03/26 10:56:06.000.879,=C:\Users\Ben\Documents\GitHub\SCM_SHARED\exeinfo.pas</Transaction>
+    <Transaction>2023/03/26 10:56:06.000.767,=C:\Users\Ben\Documents\GitHub\SCM_SHARED\SCMUtility.pas</Transaction>
+    <Transaction>2023/03/26 10:56:25.000.811,C:\Users\Ben\Documents\GitHub\SCM_Marshall-R\SCMExeInfo.pas=</Transaction>
   </Transactions>
 </BorlandProject>
