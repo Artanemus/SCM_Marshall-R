@@ -17,6 +17,7 @@ object SCM: TSCM
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayNumeric]
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.UpdateTableName = 'SwimClubMeet..SwimClub'
     UpdateOptions.KeyFields = 'SwimClubID'
     TableName = 'SwimClubMeet..SwimClub'
@@ -26,7 +27,6 @@ object SCM: TSCM
       FieldName = 'SwimClubID'
       Origin = 'SwimClubID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object tblSwimClubCaption: TWideStringField
       FieldName = 'Caption'
@@ -101,6 +101,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'EntrantID;HeatID'
     MasterSource = dsLane
     MasterFields = 'EntrantID'
@@ -160,7 +161,6 @@ object SCM: TSCM
       FieldName = 'EntrantID'
       Origin = 'EntrantID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryEntrantHeatID: TIntegerField
       FieldName = 'HeatID'
@@ -299,7 +299,6 @@ object SCM: TSCM
       FieldName = 'SessionID'
       Origin = 'SessionID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qrySessionSwimClubID: TIntegerField
       FieldName = 'SwimClubID'
@@ -383,7 +382,6 @@ object SCM: TSCM
       FieldName = 'HeatID'
       Origin = 'HeatID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryHeatHeatNum: TIntegerField
       FieldName = 'HeatNum'
@@ -416,6 +414,7 @@ object SCM: TSCM
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SessionID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
@@ -431,7 +430,6 @@ object SCM: TSCM
       '    , qryNominees.NomineeCount'
       '    , qryEntrants.EntrantCount'
       '    , Event.SessionID'
-      '    , Event.EventTypeID'
       '    , Event.StrokeID'
       '    , Event.DistanceID'
       '    , Event.EventStatusID'
@@ -490,7 +488,6 @@ object SCM: TSCM
       FieldName = 'EventID'
       Origin = 'EventID'
       ProviderFlags = [pfInWhere, pfInKey]
-      ReadOnly = True
     end
     object qryEventEventNum: TIntegerField
       FieldName = 'EventNum'
@@ -509,10 +506,6 @@ object SCM: TSCM
     object qryEventSessionID: TIntegerField
       FieldName = 'SessionID'
       Origin = 'SessionID'
-    end
-    object qryEventEventTypeID: TIntegerField
-      FieldName = 'EventTypeID'
-      Origin = 'EventTypeID'
     end
     object qryEventStrokeID: TIntegerField
       FieldName = 'StrokeID'
@@ -553,7 +546,6 @@ object SCM: TSCM
       '[MemberID]'
       '      ,[MembershipNum]'
       '      ,[MembershipStr]'
-      '      ,[MembershipDue]'
       '      ,[FirstName]'
       '      ,[LastName]'
       '      ,[DOB]'
@@ -562,7 +554,6 @@ object SCM: TSCM
       '      ,[EnableEmailOut]'
       '      ,[GenderID]'
       '      ,[SwimClubID]'
-      '      ,[MembershipTypeID]'
       
         ',SubString(Concat(Member.FirstName, '#39' '#39', Upper(Member.LastName))' +
         ', 0, 60) AS FName'
@@ -573,6 +564,7 @@ object SCM: TSCM
   end
   object qryLane: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'LaneNum;EntrantID'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -666,7 +658,7 @@ object SCM: TSCM
         Name = 'HEATID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = Null
+        Value = 1946
       end>
     object qryLaneLaneID: TIntegerField
       FieldName = 'LaneID'
@@ -682,7 +674,6 @@ object SCM: TSCM
     object qryLaneEntrantID: TFDAutoIncField
       FieldName = 'EntrantID'
       Origin = 'EntrantID'
-      ReadOnly = True
     end
     object qryLaneLane: TIntegerField
       FieldName = 'Lane'
@@ -691,7 +682,6 @@ object SCM: TSCM
     object qryLaneHeatID: TFDAutoIncField
       FieldName = 'HeatID'
       Origin = 'HeatID'
-      ReadOnly = True
     end
     object qryLaneHeatNum: TIntegerField
       FieldName = 'HeatNum'

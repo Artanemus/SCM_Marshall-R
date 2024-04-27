@@ -70,7 +70,6 @@ type
     qryEventNomineeCount: TIntegerField;
     qryEventEntrantCount: TIntegerField;
     qryEventSessionID: TIntegerField;
-    qryEventEventTypeID: TIntegerField;
     qryEventStrokeID: TIntegerField;
     qryEventDistanceID: TIntegerField;
     qryEventEventStatusID: TIntegerField;
@@ -198,14 +197,14 @@ end;
 
 procedure TSCM.DeActivateTable;
 begin
+  if qryEntrant.Active then qryEntrant.Close;
+  if qryLane.Active then qryLane.Close;
+  if qryHeat.Active then qryHeat.Close;
+  if qryEvent.Active then qryEvent.Close;
+  if qryMember.Active then qryMember.Close;
+  if qrySession.Active then qrySession.Close;
+  if tblSwimClub.Active then tblSwimClub.Close;
   FIsActive := false;
-  qryEntrant.Close;
-  qryLane.Close;
-  qryHeat.Close;
-  qryEvent.Close;
-  qryMember.Close;
-  qrySession.Close;
-  tblSwimClub.Close;
 end;
 
 {$ENDREGION}

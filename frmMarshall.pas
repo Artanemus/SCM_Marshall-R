@@ -537,7 +537,8 @@ begin
   lblEntrantsHeatNum.Text := 'Entrants ...';
 
   // ON CREATION SETS - SCM->scmConnection->Active = false;
-  SCM := TSCM.Create(self);
+//  if NOT Assigned(SCM) then
+//    SCM := TSCM.Create(self);
 
   // Read last successful connection params and load into controls
   AName := 'Server';
@@ -586,13 +587,13 @@ end;
 procedure TMarshall.FormDestroy(Sender: TObject);
 begin
   // IF DATA-MODULE EXISTS ... break the current connection.
-  if Assigned(SCM) then
-  begin
-    SCM.DeActivateTable;
-    SCM.scmConnection.Connected := false;
-  end;
+//  if Assigned(SCM) then
+//  begin
+//    SCM.DeActivateTable;
+//    SCM.scmConnection.Connected := false;
+//  end;
   // CLEAN MEMORY
-  SCM.Free;
+  // SCM.Free;
 end;
 
 procedure TMarshall.GetSCMVerInfo;

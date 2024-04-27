@@ -18,5 +18,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TMarshall, Marshall);
+  Application.CreateForm(TSCM, SCM);
   Application.Run;
 end.

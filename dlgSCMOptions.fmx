@@ -33,6 +33,7 @@ object scmOptions: TscmOptions
         Size.Width = 321.000000000000000000
         Size.Height = 81.000000000000000000
         Size.PlatformDefault = False
+        Visible = False
         TabOrder = 2
         object chkEnableAutoRefresh: TCheckBox
           Align = Client
@@ -47,7 +48,6 @@ object scmOptions: TscmOptions
       end
       object Layout9: TLayout
         Align = Top
-        Position.Y = 209.000000000000000000
         Size.Width = 321.000000000000000000
         Size.Height = 57.000000000000000000
         Size.PlatformDefault = False
@@ -66,10 +66,10 @@ object scmOptions: TscmOptions
       end
       object Layout5: TLayout
         Align = Top
-        Position.Y = 81.000000000000000000
         Size.Width = 321.000000000000000000
         Size.Height = 128.000000000000000000
         Size.PlatformDefault = False
+        Visible = False
         TabOrder = 1
         object chkEnableNomination: TCheckBox
           Align = MostTop
@@ -117,6 +117,7 @@ object scmOptions: TscmOptions
       Size.PlatformDefault = False
       TabOrder = 0
       Text = 'Close'
+      TextSettings.Trimming = None
       OnClick = btnCloseClick
     end
   end

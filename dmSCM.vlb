@@ -20,7 +20,7 @@ Coordinates=585,1,119,33
 Coordinates=418,671,112,33
 
 [qryEntrant]
-Coordinates=10,10,119,303
+Coordinates=10,10,119,321
 
 [tblSwimClubCaption]
 Coordinates=585,53,115,33
@@ -59,7 +59,7 @@ Coordinates=607,10,67,177
 Coordinates=103,878,88,33
 
 [qryMember]
-Coordinates=139,10,96,303
+Coordinates=139,10,84,267
 
 [tblSwimClubEnableMembershipStr]
 Coordinates=541,313,185,33
@@ -136,9 +136,6 @@ Coordinates=585,989,113,33
 [qryEventDistanceID]
 Coordinates=585,1041,111,33
 
-[qryEventEventTypeID]
-Coordinates=774,105,120,33
-
 [qryEntrantIsDisqualified]
 Coordinates=774,157,133,33
 
@@ -185,7 +182,7 @@ Coordinates=486,1219,92,33
 Coordinates=397,1219,85,33
 
 [qryLane]
-Coordinates=543,10,54,195
+Coordinates=543,10,54,213
 
 [tblSwimClubEnableExtHeatTypes]
 Coordinates=774,573,178,33
@@ -218,11 +215,29 @@ Coordinates=774,833,131,33
 Coordinates=774,885,116,33
 
 [qryEvent]
-Coordinates=363,10,75,249
+Coordinates=363,10,75,231
 
 [qryLaneHeatID]
 Coordinates=774,937,87,33
 
 []
-Coordinates=53,914,132,33
+Coordinates=774,105,120,33
+
+[qrySessionSessionStart]
+Coordinates=279,555,132,33
+
+[qryEntrantQualifiedStatus]
+Coordinates=774,105,141,33
+
+[qrySCMSystem]
+Coordinates=272,384,89,51
+
+[dsSCMSystem]
+Coordinates=272,314,85,33
+
+[qryQualifyState]
+Coordinates=272,454,90,51
+
+[qryLaneMemberID]
+Coordinates=391,278,104,33
 
