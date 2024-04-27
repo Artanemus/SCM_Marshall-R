@@ -16,185 +16,185 @@ uses
 
 type
   TMarshall = class(TForm)
-    ScaledLayout1: TScaledLayout;
-    layTabs: TLayout;
-    TabControl1: TTabControl;
-    tabLoginSession: TTabItem;
-    layLoginToServer: TLayout;
-    layConnectButtons: TLayout;
-    btnConnect: TButton;
-    btnDisconnect: TButton;
-    Label7: TLabel;
-    edtServer: TEdit;
-    Label8: TLabel;
-    edtUser: TEdit;
-    Label12: TLabel;
-    edtPassword: TEdit;
-    chkOsAuthent: TCheckBox;
-    Label18: TLabel;
-    laySelectSession: TLayout;
-    lblSelectSession: TLabel;
-    cmbSessionList: TComboBox;
-    tabEventHeat: TTabItem;
-    layEventHeat: TLayout;
-    ListViewEvent: TListView;
-    ListViewHeat: TListView;
-    layEventHeatTitleBar: TLayout;
-    lblEvent: TLabel;
-    lblHeat: TLabel;
-    tabEntrantRaceTime: TTabItem;
-    layEntrantRaceTime: TLayout;
-    layRaceTime: TLayout;
-    layRaceTimeTitleBar: TLayout;
-    Label3: TLabel;
-    layRaceTimeDetail: TLayout;
-    layRaceTimeText: TLayout;
-    layHeatNumber: TLayout;
-    lblHeatNumber: TLabel;
-    Label2: TLabel;
-    layLane: TLayout;
-    lblLaneNumber: TLabel;
-    txt01: TLabel;
-    layEntrantName: TLayout;
-    lblEntrantName: TLabel;
-    layPersonalBest: TLayout;
-    txt03: TLabel;
-    lblPersonalBest: TLabel;
-    layStoredRaceTime: TLayout;
-    Label5: TLabel;
-    lblRaceTime: TLabel;
-    layTimeToBeat: TLayout;
-    Label9: TLabel;
-    lblTimeToBeat: TLabel;
-    layEntrantList: TLayout;
-    ListViewLane: TListView;
-    layEntrantListTitleBar: TLayout;
-    lblEntrantsHeatNum: TLabel;
-    layFooter: TLayout;
-    SizeGrip1: TSizeGrip;
-    lblConnectionStatus: TLabel;
-    layTopBar: TLayout;
-    layTitle: TLayout;
-    lblSessionTitle: TLabel;
-    lblSwimClubTitle: TLabel;
-    laySummary: TLayout;
-    lblSelectedEntrant: TLabel;
-    lblSelectedEvent: TLabel;
-    layCenteredButtons: TLayout;
-    imgStopWatch: TImage;
-    btnOptions: TButton;
-    btnRefresh: TButton;
-    StyleBook2: TStyleBook;
-    BS_tblSwimClub: TBindSourceDB;
-    BS_qrySession: TBindSourceDB;
-    BS_qryEvent: TBindSourceDB;
-    BS_qryHeat: TBindSourceDB;
-    BindingsList1: TBindingsList;
-    LinkListControlToField2: TLinkListControlToField;
-    LinkListControlToField3: TLinkListControlToField;
-    LinkListControlToField4: TLinkListControlToField;
-    LinkListControlToField1: TLinkListControlToField;
-    LinkPropertyToFieldClubName: TLinkPropertyToField;
-    LinkPropertyToFieldSessionDate: TLinkPropertyToField;
-    LinkPropertyToFieldText: TLinkPropertyToField;
-    LinkPropertyToFieldText3: TLinkPropertyToField;
-    LinkPropertyToFieldText4: TLinkPropertyToField;
-    LinkPropertyToFieldText6: TLinkPropertyToField;
-    LinkPropertyToFieldText5: TLinkPropertyToField;
-    LinkPropertyToFieldText7: TLinkPropertyToField;
-    LinkPropertyToFieldText8: TLinkPropertyToField;
-    LinkPropertyToFieldText2: TLinkPropertyToField;
-    BS_qryEntrant: TBindSourceDB;
     ActionList1: TActionList;
     actnConnect: TAction;
     actnDisconnect: TAction;
-    actnRefresh: TAction;
     actnQualify: TAction;
+    actnRefresh: TAction;
     actnSCMOptions: TAction;
-    BS_qryLane: TBindSourceDB;
-    ImageList1: TImageList;
     AniIndicator1: TAniIndicator;
-    lblAniIndicatorStatus: TLabel;
-    Timer1: TTimer;
-    Layout1: TLayout;
+    BindingsList1: TBindingsList;
+    BS_qryEntrant: TBindSourceDB;
+    BS_qryEvent: TBindSourceDB;
+    BS_qryHeat: TBindSourceDB;
+    BS_qryLane: TBindSourceDB;
+    BS_qrySession: TBindSourceDB;
+    BS_tblSwimClub: TBindSourceDB;
+    btnConnect: TButton;
+    btnDisconnect: TButton;
+    btnOptions: TButton;
+    btnRefresh: TButton;
+    btnRTN: TButton;
+    chkbUseOSAuthentication: TCheckBox;
+    cmbSessionList: TComboBox;
+    edtPassword: TEdit;
+    edtServerName: TEdit;
+    edtUser: TEdit;
     FlowLayout1: TFlowLayout;
+    Image1: TImage;
     Image2: TImage;
     Image3: TImage;
-    Image1: TImage;
+    ImageList1: TImageList;
+    imgStopWatch: TImage;
+    Label1: TLabel;
+    Label12: TLabel;
+    Label18: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    layCenteredButtons: TLayout;
+    layConnectButtons: TLayout;
+    layEntrantList: TLayout;
+    layEntrantListTitleBar: TLayout;
+    layEntrantName: TLayout;
+    layEntrantRaceTime: TLayout;
+    layEventHeat: TLayout;
+    layEventHeatTitleBar: TLayout;
+    layFooter: TLayout;
+    layHeatNumber: TLayout;
+    layLane: TLayout;
+    layLoginToServer: TLayout;
+    Layout1: TLayout;
+    layPersonalBest: TLayout;
+    layPostQualifyStatus: TLayout;
+    layQualifyStatus: TLayout;
+    layRaceTime: TLayout;
+    layRaceTimeDetail: TLayout;
+    layRaceTimeText: TLayout;
+    layRaceTimeTitleBar: TLayout;
+    laySelectSession: TLayout;
+    layStoredRaceTime: TLayout;
+    laySummary: TLayout;
+    layTabs: TLayout;
+    layTimeToBeat: TLayout;
+    layTitle: TLayout;
+    layTopBar: TLayout;
+    lblAniIndicatorStatus: TLabel;
+    lblConnectionStatus: TLabel;
+    lblEntrantName: TLabel;
+    lblEntrantsHeatNum: TLabel;
+    lblEvent: TLabel;
+    lblHeat: TLabel;
+    lblHeatNumber: TLabel;
+    lblLaneNumber: TLabel;
+    lblPersonalBest: TLabel;
+    lblQualifyStatus: TLabel;
+    lblRaceTime: TLabel;
+    lblSelectedEntrant: TLabel;
+    lblSelectedEvent: TLabel;
+    lblSelectSession: TLabel;
+    lblSessionTitle: TLabel;
+    lblSwimClubTitle: TLabel;
+    lblTimeToBeat: TLabel;
+    LinkListControlToField1: TLinkListControlToField;
+    LinkListControlToField2: TLinkListControlToField;
+    LinkListControlToField3: TLinkListControlToField;
+    LinkListControlToField4: TLinkListControlToField;
+    LinkPropertyToFieldClubName: TLinkPropertyToField;
+    LinkPropertyToFieldSessionDate: TLinkPropertyToField;
+    LinkPropertyToFieldText: TLinkPropertyToField;
+    LinkPropertyToFieldText10: TLinkPropertyToField;
+    LinkPropertyToFieldText2: TLinkPropertyToField;
+    LinkPropertyToFieldText3: TLinkPropertyToField;
+    LinkPropertyToFieldText4: TLinkPropertyToField;
+    LinkPropertyToFieldText5: TLinkPropertyToField;
+    LinkPropertyToFieldText6: TLinkPropertyToField;
+    LinkPropertyToFieldText7: TLinkPropertyToField;
+    LinkPropertyToFieldText8: TLinkPropertyToField;
+    LinkPropertyToFieldText9: TLinkPropertyToField;
+    ListViewEvent: TListView;
+    ListViewHeat: TListView;
+    ListViewLane: TListView;
+    MonochromeEffect1: TMonochromeEffect;
     MonochromeEffect2: TMonochromeEffect;
     MonochromeEffect3: TMonochromeEffect;
-    MonochromeEffect1: TMonochromeEffect;
-    layQualifyStatus: TLayout;
-    Label1: TLabel;
-    lblQualifyStatus: TLabel;
-    layPostQualifyStatus: TLayout;
-    btnRTN: TButton;
-    LinkPropertyToFieldText9: TLinkPropertyToField;
-    LinkPropertyToFieldText10: TLinkPropertyToField;
-    Label4: TLabel;
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure TabControl1Change(Sender: TObject);
+    ScaledLayout1: TScaledLayout;
+    SizeGrip1: TSizeGrip;
+    StyleBook2: TStyleBook;
+    TabControl1: TTabControl;
+    tabEntrantRaceTime: TTabItem;
+    tabEventHeat: TTabItem;
+    tabLoginSession: TTabItem;
+    Timer1: TTimer;
+    txt01: TLabel;
+    txt03: TLabel;
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);
     procedure actnDisconnectExecute(Sender: TObject);
     procedure actnDisconnectUpdate(Sender: TObject);
-    procedure actnRefreshExecute(Sender: TObject);
-    procedure actnRefreshUpdate(Sender: TObject);
     procedure actnQualifyExecute(Sender: TObject);
     procedure actnQualifyUpdate(Sender: TObject);
+    procedure actnRefreshExecute(Sender: TObject);
+    procedure actnRefreshUpdate(Sender: TObject);
     procedure actnSCMOptionsExecute(Sender: TObject);
     procedure actnSCMOptionsUpdate(Sender: TObject);
-    procedure ListViewHeatChange(Sender: TObject);
-    procedure ListViewEventChange(Sender: TObject);
-    procedure ListViewLaneChange(Sender: TObject);
     procedure cmbSessionListChange(Sender: TObject);
-    procedure imgStopWatchClick(Sender: TObject);
-    procedure ListViewHeatDblClick(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure ImageQualifyClick(Sender: TObject);
-    procedure ListViewLaneUpdateObjects(const Sender: TObject;
-      const AItem: TListViewItem);
+    procedure imgStopWatchClick(Sender: TObject);
+    procedure ListViewEventChange(Sender: TObject);
+    procedure ListViewHeatChange(Sender: TObject);
+    procedure ListViewHeatDblClick(Sender: TObject);
+    procedure ListViewLaneChange(Sender: TObject);
     procedure ListViewLaneItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
-    procedure LinkPropertyToFieldText4AssignedValue(Sender: TObject;
-      AssignValueRec: TBindingAssignValueRec; const Value: TValue);
-    procedure LinkPropertyToFieldText10AssignedValue(Sender: TObject;
-      AssignValueRec: TBindingAssignValueRec; const Value: TValue);
-
-  private const
-    SCMCONFIGFILENAME = 'SCMConfig.ini';
-    CONNECTIONTIMEOUT = 48;
-
+    procedure ListViewLaneUpdateObjects(const Sender: TObject;
+      const AItem: TListViewItem);
+    procedure TabControl1Change(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
+  const
+    CONNECTIONTIMEOUT = 48;
+    SCMCONFIGFILENAME = 'SCMConfig.ini';
+  var
+    fConnectionCountdown: Integer;
     { Private declarations }
     fEnableAutoReFresh: Boolean;
     fEnableNomination: Boolean;
     fHideClosedSessions: Boolean;
-    fConnectionCountdown: Integer;
-
-    procedure scmPostQualify(AQualifyStatus: Integer);
     procedure ConnectOnTerminate(Sender: TObject);
-    procedure scmSetBigButtonsEffect(btnTag: Integer);
-    function scmGetBigButtonsEffect: Integer;
-
     procedure GetSCMVerInfo();
-
-
+    procedure LoadConfigData;
+    procedure SaveConfigData;
+    function scmGetBigButtonsEffect: Integer;
+    procedure scmPostQualify(AQualifyStatus: Integer);
+    procedure scmSetBigButtonsEffect(btnTag: Integer);
+    procedure SimpleLoadSettingString(ASection, AName: String;
+      var AValue: String);
+    procedure SimpleSaveSettingString(ASection, AName, AValue: String);
   public
+  const
+  SectionName = 'Marshall';
     { Public declarations }
     procedure scmOptionsLoad;
+    procedure scmRefreshBigButtons;
     procedure scmRefreshEntrant_Detail;
     procedure scmRefreshLane;
-    procedure scmRefreshBigButtons;
+    procedure scmUpdateHideClosedSessions;
     // procedure scmRefresh_tabEntrantRaceTime;
     procedure scmUpdateNomination(EnableNomination: Boolean);
     procedure scmUpdateTabSheetsImages;
-    procedure scmUpdateHideClosedSessions;
-    property HideClosedsessions: Boolean read fHideClosedSessions;
     property EnableNomination: Boolean read fEnableNomination;
+    property HideClosedsessions: Boolean read fHideClosedSessions;
+end;
 
-  end;
+
 
 var
   Marshall: TMarshall;
@@ -239,8 +239,8 @@ begin
       begin
         sc := TSimpleConnect.CreateWithConnection(Self, SCM.scmConnection);
         sc.DBName := 'SwimClubMeet'; // DEFAULT
-        sc.SimpleMakeTemporyConnection(edtServer.Text, edtUser.Text,
-          edtPassword.Text, chkOsAuthent.IsChecked);
+        sc.SimpleMakeTemporyConnection(edtServerName.Text, edtUser.Text,
+          edtPassword.Text, chkbUseOSAuthentication.IsChecked);
         Timer1.Enabled := false;
         lblAniIndicatorStatus.Visible := false;
         AniIndicator1.Enabled := false;
@@ -541,19 +541,23 @@ begin
 //    SCM := TSCM.Create(self);
 
   // Read last successful connection params and load into controls
+  {
   AName := 'Server';
-  edtServer.Text := LoadSharedIniFileSetting(ASection, AName);
+  edtServerName.Text := LoadSharedIniFileSetting(ASection, AName);
   AName := 'User';
   edtUser.Text := LoadSharedIniFileSetting(ASection, AName);
   AName := 'Password';
   edtPassword.Text := LoadSharedIniFileSetting(ASection, AName);
   AName := 'OsAuthent';
   AValue := LoadSharedIniFileSetting(ASection, AName);
+  }
+
+  LoadConfigData;
 
   if ((UpperCase(AValue) = 'YES') or (UpperCase(AValue) = 'TRUE')) then
-    chkOsAuthent.IsChecked := true
+    chkbUseOSAuthentication.IsChecked := true
   else
-    chkOsAuthent.IsChecked := false;
+    chkbUseOSAuthentication.IsChecked := false;
 
   // Connection status - located in footer bar.
   lblConnectionStatus.Text := '';
@@ -586,6 +590,8 @@ end;
 
 procedure TMarshall.FormDestroy(Sender: TObject);
 begin
+  SaveConfigData;
+
   // IF DATA-MODULE EXISTS ... break the current connection.
 //  if Assigned(SCM) then
 //  begin
@@ -647,36 +653,6 @@ begin
   (*
     IMPORTANT NOTE DIALOGUE IS DESTROYED IN TscmStopWatch.FormClose
   *)
-end;
-
-procedure TMarshall.LinkPropertyToFieldText10AssignedValue(Sender: TObject;
-AssignValueRec: TBindingAssignValueRec; const Value: TValue);
-var
-  v: string;
-begin
-  // if there is no entrant then lane number is blank
-  // use the lane number given in qryLane
-  v := Value.AsString;
-  if (v.IsEmpty) then
-  begin
-    if (Assigned(SCM) and SCM.IsActive) then
-      lblLaneNumber.Text := SCM.qryLane.FieldByName('LaneNum').AsString
-    else
-      lblEntrantsHeatNum.Text := '';
-  end;
-end;
-
-procedure TMarshall.LinkPropertyToFieldText4AssignedValue(Sender: TObject;
-AssignValueRec: TBindingAssignValueRec; const Value: TValue);
-var
-  v: string;
-begin
-  // If there are no heats ... the Value points to an empty string.
-  // Assign a corrected caption above the ListView Entrants.
-  // NOTE: Custom Binding Default is "Entrants.. " + %s
-  v := Value.AsString;
-  if (v.IsEmpty) then
-    lblEntrantsHeatNum.Text := 'Entrants ...'
 end;
 
 procedure TMarshall.ListViewEventChange(Sender: TObject);
@@ -789,6 +765,119 @@ begin
       obj.Visible := false;
   end;
 end;
+
+procedure TMarshall.LoadConfigData;
+var
+  ASection: string;
+  Server: string;
+  User: string;
+  Password: string;
+  AValue: string;
+  AName: string;
+
+begin
+  ASection := SectionName;
+  AName := 'Server';
+  SimpleLoadSettingString(ASection, AName, Server);
+  if Server.IsEmpty then
+    edtServerName.Text := 'localHost\SQLEXPRESS'
+  else
+    edtServerName.Text := Server;
+  AName := 'User';
+  SimpleLoadSettingString(ASection, AName, User);
+  edtUser.Text := User;
+  AName := 'Password';
+  SimpleLoadSettingString(ASection, AName, Password);
+  edtPassword.Text := Password;
+  AName := 'OSAuthent';
+  SimpleLoadSettingString(ASection, AName, AValue);
+  if (Pos('y', AValue) <> 0) or (Pos('Y', AValue) <> 0) then
+    chkbUseOSAuthentication.IsChecked := true
+  else
+    chkbUseOSAuthentication.IsChecked := false;
+end;
+
+procedure TMarshall.SaveConfigData;
+var
+  ASection, AName, AValue: String;
+begin
+  begin
+    ASection := SectionName;
+    AName := 'Server';
+    SimpleSaveSettingString(ASection, AName, edtServerName.Text);
+    AName := 'User';
+    SimpleSaveSettingString(ASection, AName, edtUser.Text);
+    AName := 'Password';
+    SimpleSaveSettingString(ASection, AName, edtPassword.Text);
+    AName := 'OSAuthent';
+    if chkbUseOSAuthentication.IsChecked = true then
+      AValue := 'Yes'
+    else
+      AValue := 'No';
+    SimpleSaveSettingString(ASection, AName, AValue);
+  end
+
+end;
+
+procedure TMarshall.SimpleLoadSettingString(ASection, AName: String;
+  var AValue: String);
+var
+  ini: TIniFile;
+begin
+  // Note: OneDrive enabled: 'Personal'
+  // The routine TPath.GetDocumentsPath normally returns ...
+  // C:\Users\<username>\Documents (Windows Vista or later)
+  // but is instead mapped to C:\Users\<username>\OneDrive\Documents.
+  //
+  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
+    SCMCONFIGFILENAME);
+  try
+    AValue := ini.ReadString(ASection, AName, '');
+  finally
+    ini.Free;
+  end;
+end;
+
+procedure TMarshall.SimpleSaveSettingString(ASection, AName,
+  AValue: String);
+var
+  ini: TIniFile;
+begin
+  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
+    SCMCONFIGFILENAME);
+  try
+    ini.WriteString(ASection, AName, AValue);
+  finally
+    ini.Free;
+  end;
+
+end;
+
+procedure TMarshall.TabControl1Change(Sender: TObject);
+begin
+  case TabControl1.TabIndex of
+    0:
+      lblConnectionStatus.Text := '';
+    1:
+      // each time EVENT..HEAT tabsheet is selected ... refresh data
+      if (fEnableAutoReFresh) then
+        actnRefreshExecute(self);
+    2:
+      begin
+        lblConnectionStatus.Text := '';
+        scmRefreshLane;
+        // Big buttons are NOT DATA-AWARE. Refresh 'QUALIFICATION STATUS'
+        scmRefreshBigButtons;
+      end;
+  end;
+end;
+
+procedure TMarshall.Timer1Timer(Sender: TObject);
+begin
+  fConnectionCountdown := fConnectionCountdown - 1;
+  lblAniIndicatorStatus.Text := 'Connecting ' + IntToStr(fConnectionCountdown);
+end;
+
 
 {$REGION 'MISC SCM Declarations' }
 
@@ -1137,30 +1226,5 @@ begin
 end;
 
 {$ENDREGION}
-
-procedure TMarshall.TabControl1Change(Sender: TObject);
-begin
-  case TabControl1.TabIndex of
-    0:
-      lblConnectionStatus.Text := '';
-    1:
-      // each time EVENT..HEAT tabsheet is selected ... refresh data
-      if (fEnableAutoReFresh) then
-        actnRefreshExecute(self);
-    2:
-      begin
-        lblConnectionStatus.Text := '';
-        scmRefreshLane;
-        // Big buttons are NOT DATA-AWARE. Refresh 'QUALIFICATION STATUS'
-        scmRefreshBigButtons;
-      end;
-  end;
-end;
-
-procedure TMarshall.Timer1Timer(Sender: TObject);
-begin
-  fConnectionCountdown := fConnectionCountdown - 1;
-  lblAniIndicatorStatus.Text := 'Connecting ' + IntToStr(fConnectionCountdown);
-end;
 
 end.
