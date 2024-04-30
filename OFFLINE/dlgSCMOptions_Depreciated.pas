@@ -1,4 +1,4 @@
-unit dlgSCMOptions;
+unit dlgSCMOptions_Depreciated;
 
 interface
 

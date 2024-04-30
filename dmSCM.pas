@@ -8,7 +8,9 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.MSSQL,
   FireDAC.Phys.MSSQLDef, FireDAC.FMXUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.Client,
-  FireDAC.Comp.DataSet, System.Variants, System.IniFiles, System.IOUtils;
+  FireDAC.Comp.DataSet, System.Variants, System.IniFiles, System.IOUtils,
+  Data.Bind.EngExt, Fmx.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
+  Data.Bind.Components, Data.Bind.DBScope;
 
 type
   TSCM = class(TDataModule)
@@ -33,6 +35,73 @@ type
     dsHeat: TDataSource;
     dsMember: TDataSource;
     qryEntrant: TFDQuery;
+    dsEntrant: TDataSource;
+    qrySession: TFDQuery;
+    qryHeat: TFDQuery;
+    qryEvent: TFDQuery;
+    qryMember: TFDQuery;
+    qryLane: TFDQuery;
+    qryLaneLaneID: TIntegerField;
+    qryLaneLaneNum: TIntegerField;
+    qryLaneEntrantID: TFDAutoIncField;
+    qryLaneLane: TIntegerField;
+    qryLaneHeatID: TFDAutoIncField;
+    qryLaneHeatNum: TIntegerField;
+    qryLaneEventID: TIntegerField;
+    qryLaneFName: TWideStringField;
+    dsLane: TDataSource;
+    qryQualifyState: TFDQuery;
+    qryLaneMemberID: TIntegerField;
+    qrySCMSystem: TFDQuery;
+    dsSCMSystem: TDataSource;
+    qryEventEventID: TFDAutoIncField;
+    qryEventEventNum: TIntegerField;
+    qryEventNomineeCount: TIntegerField;
+    qryEventEntrantCount: TIntegerField;
+    qryEventSessionID: TIntegerField;
+    qryEventStrokeID: TIntegerField;
+    qryEventDistanceID: TIntegerField;
+    qryEventEventStatusID: TIntegerField;
+    qryEventListTextStr: TWideStringField;
+    qryEventListDetailStr: TWideStringField;
+    qrySessionSessionID: TFDAutoIncField;
+    qrySessionSessionStart: TSQLTimeStampField;
+    qrySessionSwimClubID: TIntegerField;
+    qrySessionSessionStatusID: TIntegerField;
+    qrySessionSessionStatusStr: TStringField;
+    qrySessionCaption: TWideStringField;
+    qrySessionSessionStartStr: TWideStringField;
+    qrySessionSessionDetailStr: TWideStringField;
+    qryHeatHeatID: TFDAutoIncField;
+    qryHeatHeatNum: TIntegerField;
+    qryHeatEventID: TIntegerField;
+    qryHeatHeatTypeID: TIntegerField;
+    qryHeatHeatStatusID: TIntegerField;
+    qryHeatStatusStr: TWideStringField;
+    qryHeatHeatNumStr1: TStringField;
+    qryHeatHeatNumStr2: TStringField;
+    qryQualifyStateEntrantID: TFDAutoIncField;
+    qryQualifyStateHeatID: TIntegerField;
+    qryQualifyStateIsDisqualified: TBooleanField;
+    qryQualifyStateIsScratched: TBooleanField;
+    qryQualifyStateQualifyState: TIntegerField;
+    qryMemberMemberID: TFDAutoIncField;
+    qryMemberMembershipNum: TIntegerField;
+    qryMemberMembershipStr: TWideStringField;
+    qryMemberFirstName: TWideStringField;
+    qryMemberLastName: TWideStringField;
+    qryMemberDOB: TSQLTimeStampField;
+    qryMemberIsActive: TBooleanField;
+    qryMemberEmail: TWideStringField;
+    qryMemberEnableEmailOut: TBooleanField;
+    qryMemberGenderID: TIntegerField;
+    qryMemberSwimClubID: TIntegerField;
+    qryMemberFName: TWideStringField;
+    qrySCMSystemSCMSystemID: TFDAutoIncField;
+    qrySCMSystemDBVersion: TIntegerField;
+    qrySCMSystemMajor: TIntegerField;
+    qrySCMSystemMinor: TIntegerField;
+    qrySCMSystemBuild: TIntegerField;
     qryEntrantEntrantID: TFDAutoIncField;
     qryEntrantHeatID: TIntegerField;
     qryEntrantHeatNum: TIntegerField;
@@ -46,52 +115,8 @@ type
     qryEntrantPersonalBestStr: TWideStringField;
     qryEntrantRaceTimeStr: TWideStringField;
     qryEntrantFNameStr: TWideStringField;
-    qryEntrantHeatNumLaneFNameStr: TWideStringField;
-    dsEntrant: TDataSource;
-    qrySession: TFDQuery;
-    qrySessionSessionID: TFDAutoIncField;
-    qrySessionSwimClubID: TIntegerField;
-    qrySessionSessionStatusID: TIntegerField;
-    qrySessionSessionStatusStr: TStringField;
-    qrySessionCaption: TWideStringField;
-    qrySessionSessionStartStr: TWideStringField;
-    qrySessionSessionDetailStr: TWideStringField;
-    qryHeat: TFDQuery;
-    qryHeatHeatID: TFDAutoIncField;
-    qryHeatHeatNum: TIntegerField;
-    qryHeatEventID: TIntegerField;
-    qryHeatHeatTypeID: TIntegerField;
-    qryHeatHeatStatusID: TIntegerField;
-    qryHeatListDetailStr: TWideStringField;
-    qryHeatListTextStr: TStringField;
-    qryEvent: TFDQuery;
-    qryEventEventID: TFDAutoIncField;
-    qryEventEventNum: TIntegerField;
-    qryEventNomineeCount: TIntegerField;
-    qryEventEntrantCount: TIntegerField;
-    qryEventSessionID: TIntegerField;
-    qryEventStrokeID: TIntegerField;
-    qryEventDistanceID: TIntegerField;
-    qryEventEventStatusID: TIntegerField;
-    qryEventListTextStr: TWideStringField;
-    qryEventListDetailStr: TWideStringField;
-    qryMember: TFDQuery;
-    qryLane: TFDQuery;
-    qryLaneLaneID: TIntegerField;
-    qryLaneLaneNum: TIntegerField;
-    qryLaneEntrantID: TFDAutoIncField;
-    qryLaneLane: TIntegerField;
-    qryLaneHeatID: TFDAutoIncField;
-    qryLaneHeatNum: TIntegerField;
-    qryLaneEventID: TIntegerField;
-    qryLaneFName: TWideStringField;
-    dsLane: TDataSource;
     qryEntrantQualifiedStatus: TStringField;
-    qryQualifyState: TFDQuery;
-    qrySessionSessionStart: TSQLTimeStampField;
-    qryLaneMemberID: TIntegerField;
-    qrySCMSystem: TFDQuery;
-    dsSCMSystem: TDataSource;
+    qryEntrantHeatNumLaneFNameStr: TWideStringField;
     procedure qryHeatAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -154,8 +179,10 @@ begin
     tblSwimClub.First;
     // SESSION
     qrySession.Open;
+    qrySCMSystem.Open;
     if qrySession.Active then
     begin
+      qryQualifyState.Open;
       qryMember.Open;
       if qryMember.Active then
       begin
@@ -192,7 +219,9 @@ procedure TSCM.DataModuleCreate(Sender: TObject);
 begin
   // make sure the there isn't an active connection
   FIsActive := false;
-  scmConnection.Connected := false;
+//  scmConnection.Connected := true;
+//  if scmConnection.Connected then
+//    ActivateTable;
 end;
 
 procedure TSCM.DeActivateTable;
@@ -204,6 +233,10 @@ begin
   if qryMember.Active then qryMember.Close;
   if qrySession.Active then qrySession.Close;
   if tblSwimClub.Active then tblSwimClub.Close;
+
+  if qryQualifyState.Active then qryQualifyState.Close;
+  if qrySCMSystem.Active then qrySCMSystem.Close;
+
   FIsActive := false;
 end;
 

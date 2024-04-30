@@ -1,19 +1,17 @@
 object SCM: TSCM
   OnCreate = DataModuleCreate
   Height = 607
-  Width = 420
+  Width = 438
   object scmConnection: TFDConnection
     Params.Strings = (
-      'ConnectionDef=MSSQL_SwimClubMeet')
-    ConnectedStoredUsage = [auDesignTime]
-    Connected = True
+      'ConnectionDef=MSSQL_SwimClubMeet'
+      'LoginTimeout=0')
     LoginPrompt = False
     Left = 64
     Top = 24
   end
   object tblSwimClub: TFDTable
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimClubID'
     Connection = scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayNumeric]
@@ -96,12 +94,11 @@ object SCM: TSCM
   end
   object dsMember: TDataSource
     DataSet = qryMember
-    Left = 104
-    Top = 184
+    Left = 112
+    Top = 200
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'EntrantID;HeatID'
     MasterSource = dsLane
     MasterFields = 'EntrantID'
@@ -185,10 +182,12 @@ object SCM: TSCM
     object qryEntrantIsDisqualified: TBooleanField
       FieldName = 'IsDisqualified'
       Origin = 'IsDisqualified'
+      Required = True
     end
     object qryEntrantIsScratched: TBooleanField
       FieldName = 'IsScratched'
       Origin = 'IsScratched'
+      Required = True
     end
     object qryEntrantPersonalBest: TTimeField
       FieldName = 'PersonalBest'
@@ -219,13 +218,6 @@ object SCM: TSCM
       Required = True
       Size = 257
     end
-    object qryEntrantHeatNumLaneFNameStr: TWideStringField
-      FieldName = 'HeatNumLaneFNameStr'
-      Origin = 'HeatNumLaneFNameStr'
-      ReadOnly = True
-      Required = True
-      Size = 4000
-    end
     object qryEntrantQualifiedStatus: TStringField
       FieldName = 'QualifiedStatus'
       Origin = 'QualifiedStatus'
@@ -233,56 +225,68 @@ object SCM: TSCM
       Required = True
       Size = 12
     end
+    object qryEntrantHeatNumLaneFNameStr: TWideStringField
+      FieldName = 'HeatNumLaneFNameStr'
+      Origin = 'HeatNumLaneFNameStr'
+      ReadOnly = True
+      Required = True
+      Size = 4000
+    end
   end
   object dsEntrant: TDataSource
     DataSet = qryEntrant
-    Left = 120
+    Left = 112
     Top = 506
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimClubID'
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
     Connection = scmConnection
     FormatOptions.AssignedValues = [fvFmtDisplayDateTime]
     FormatOptions.FmtDisplayDateTime = 'dddd dd/mm/yyyy HH:nn'
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Session'
     UpdateOptions.KeyFields = 'SessionID'
     SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
       'DECLARE @HideClosed AS BIT;'
       'SET @HideClosed = :HIDECLOSED;'
       ''
       'SELECT Session.SessionID'
-      '    , Session.SessionStart'
-      '    , Session.SwimClubID'
-      '    , Session.SessionStatusID'
-      '    , CASE '
-      '        WHEN Session.SessionStatusID = 1'
-      '            THEN '#39'(UNLOCKED)'#39
-      '        ELSE '#39'(LOCKED)'#39
-      '        END AS SessionStatusStr'
-      '    , Session.Caption'
+      '     , Session.SessionStart'
+      '     , Session.SwimClubID'
+      '     , Session.SessionStatusID'
+      '     , CASE'
+      '           WHEN Session.SessionStatusID = 1 THEN'
+      '               '#39'(UNLOCKED)'#39
+      '           ELSE'
+      '               '#39'(LOCKED)'#39
+      '       END AS SessionStatusStr'
+      '     , Session.Caption'
       
-        '    , Format(SessionStart, '#39'dddd dd/MM/yyyy HH:mm'#39') AS SessionSt' +
-        'artStr'
-      '    , CONCAT ('
-      '        Format(SessionStart, '#39'dddd dd/MM/yyyy HH:mm'#39')'
-      '        , IIF(Session.SessionStatusID = 1, '#39' '#39', '#39' (LOCKED) '#39')'
-      '        , [Session].Caption'
-      '        ) AS SessionDetailStr'
+        '     , FORMAT(SessionStart, '#39'dddd dd/MM/yyyy HH:mm'#39') AS SessionS' +
+        'tartStr'
+      '     , CONCAT('
+      '                 FORMAT(SessionStart, '#39'dddd dd/MM/yyyy HH:mm'#39')'
+      
+        '               , IIF(Session.SessionStatusID = 1, '#39' '#39', '#39' (LOCKED' +
+        ') '#39')'
+      '               , [Session].Caption'
+      '             ) AS SessionDetailStr'
       'FROM Session'
       ''
       
         '-- WHERE (Session.SessionStatusID = 1) OR Session.SessionStatusI' +
         'D = CASE WHEN @HideClosed=1 THEN 1 ELSE 2 END'
-      
-        'WHERE (@HideClosed = 0 AND Session.SessionStatusID = 2) OR (Sess' +
-        'ion.SessionStatusID = 1)'
-      ''
+      'WHERE ('
+      '          @HideClosed = 0'
+      '          AND Session.SessionStatusID = 2'
+      '      )'
+      '      OR (Session.SessionStatusID = 1)'
       'ORDER BY Session.SessionStart DESC'
       ''
       '')
@@ -299,6 +303,11 @@ object SCM: TSCM
       FieldName = 'SessionID'
       Origin = 'SessionID'
       ProviderFlags = [pfInWhere, pfInKey]
+    end
+    object qrySessionSessionStart: TSQLTimeStampField
+      FieldName = 'SessionStart'
+      Origin = 'SessionStart'
+      DisplayFormat = 'dddd dd/mm/yyyy HH:nn'
     end
     object qrySessionSwimClubID: TIntegerField
       FieldName = 'SwimClubID'
@@ -333,50 +342,43 @@ object SCM: TSCM
       Required = True
       Size = 4000
     end
-    object qrySessionSessionStart: TSQLTimeStampField
-      FieldName = 'SessionStart'
-      Origin = 'SessionStart'
-      DisplayFormat = 'dddd dd/mm/yyyy HH:nn'
-    end
   end
   object qryHeat: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     AfterScroll = qryHeatAfterScroll
     IndexFieldNames = 'EventID'
     MasterSource = dsEvent
     MasterFields = 'EventID'
+    DetailFields = 'EventID'
     Connection = scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet..HeatIndividual'
     UpdateOptions.KeyFields = 'HeatID'
     SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
       'SELECT HeatIndividual.HeatID'
-      '    , HeatIndividual.HeatNum'
-      '    , HeatIndividual.EventID'
-      '    , HeatIndividual.HeatTypeID'
-      '    , HeatIndividual.HeatStatusID'
-      '    , HeatStatus.Caption AS ListDetailStr'
-      '    , CONCAT ('
-      '        '#39'Heat: '#39
-      '        , HeatIndividual.HeatNum'
-      '        ) AS HeatNumStr'
-      '    , CONCAT ('
-      '        '#39'Heat: '#39
-      '        , HeatIndividual.HeatNum'
-      ',CASE WHEN HeatIndividual.HeatStatusID = 1'
-      'THEN '#39#39
-      'ELSE '#39' (CLOSED)'#39
-      'END'
-      ''
-      '        ) AS ListTextStr'
-      ''
+      '     , HeatIndividual.HeatNum'
+      '     , HeatIndividual.EventID'
+      '     , HeatIndividual.HeatTypeID'
+      '     , HeatIndividual.HeatStatusID'
+      '     , HeatStatus.Caption AS StatusStr'
+      '     , CONCAT('#39'Heat: '#39', HeatIndividual.HeatNum) AS HeatNumStr1'
+      '     , CONCAT(   '#39'Heat: '#39
+      '               , HeatIndividual.HeatNum'
+      '               , CASE'
+      '                     WHEN HeatIndividual.HeatStatusID = 1 THEN'
+      '                         '#39#39
+      '                     ELSE'
+      '                         '#39' (CLOSED)'#39
+      '                 END'
+      '             ) AS HeatNumStr2'
       'FROM HeatIndividual'
-      'INNER JOIN HeatStatus'
-      '    ON HeatIndividual.HeatStatusID = HeatStatus.HeatStatusID'
+      '    INNER JOIN HeatStatus'
+      '        ON HeatIndividual.HeatStatusID = HeatStatus.HeatStatusID'
       'ORDER BY HeatIndividual.HeatNum')
-    Left = 40
+    Left = 48
     Top = 378
     object qryHeatHeatID: TFDAutoIncField
       FieldName = 'HeatID'
@@ -399,27 +401,37 @@ object SCM: TSCM
       FieldName = 'HeatStatusID'
       Origin = 'HeatStatusID'
     end
-    object qryHeatListDetailStr: TWideStringField
-      FieldName = 'ListDetailStr'
-      Origin = 'ListDetailStr'
+    object qryHeatStatusStr: TWideStringField
+      FieldName = 'StatusStr'
+      Origin = 'StatusStr'
       Size = 60
     end
-    object qryHeatListTextStr: TStringField
-      FieldName = 'ListTextStr'
-      Origin = 'ListTextStr'
+    object qryHeatHeatNumStr1: TStringField
+      FieldName = 'HeatNumStr1'
+      Origin = 'HeatNumStr1'
       ReadOnly = True
       Required = True
       Size = 18
     end
+    object qryHeatHeatNumStr2: TStringField
+      FieldName = 'HeatNumStr2'
+      Origin = 'HeatNumStr2'
+      ReadOnly = True
+      Required = True
+      Size = 27
+    end
   end
   object qryEvent: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SessionID'
     MasterSource = dsSession
     MasterFields = 'SessionID'
     DetailFields = 'SessionID'
     Connection = scmConnection
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Event'
     UpdateOptions.KeyFields = 'EventID'
     SQL.Strings = (
@@ -524,7 +536,7 @@ object SCM: TSCM
       Origin = 'ListTextStr'
       ReadOnly = True
       Required = True
-      Size = 279
+      Size = 4000
     end
     object qryEventListDetailStr: TWideStringField
       FieldName = 'ListDetailStr'
@@ -536,7 +548,6 @@ object SCM: TSCM
   end
   object qryMember: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'MemberID'
     Connection = scmConnection
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Member'
@@ -560,11 +571,67 @@ object SCM: TSCM
       ''
       'FROM Member ORDER BY [LastName]')
     Left = 48
-    Top = 184
+    Top = 200
+    object qryMemberMemberID: TFDAutoIncField
+      FieldName = 'MemberID'
+      Origin = 'MemberID'
+      ProviderFlags = [pfInWhere, pfInKey]
+    end
+    object qryMemberMembershipNum: TIntegerField
+      FieldName = 'MembershipNum'
+      Origin = 'MembershipNum'
+    end
+    object qryMemberMembershipStr: TWideStringField
+      FieldName = 'MembershipStr'
+      Origin = 'MembershipStr'
+      Size = 24
+    end
+    object qryMemberFirstName: TWideStringField
+      FieldName = 'FirstName'
+      Origin = 'FirstName'
+      Size = 128
+    end
+    object qryMemberLastName: TWideStringField
+      FieldName = 'LastName'
+      Origin = 'LastName'
+      Size = 128
+    end
+    object qryMemberDOB: TSQLTimeStampField
+      FieldName = 'DOB'
+      Origin = 'DOB'
+    end
+    object qryMemberIsActive: TBooleanField
+      FieldName = 'IsActive'
+      Origin = 'IsActive'
+      Required = True
+    end
+    object qryMemberEmail: TWideStringField
+      FieldName = 'Email'
+      Origin = 'Email'
+      Size = 256
+    end
+    object qryMemberEnableEmailOut: TBooleanField
+      FieldName = 'EnableEmailOut'
+      Origin = 'EnableEmailOut'
+      Required = True
+    end
+    object qryMemberGenderID: TIntegerField
+      FieldName = 'GenderID'
+      Origin = 'GenderID'
+    end
+    object qryMemberSwimClubID: TIntegerField
+      FieldName = 'SwimClubID'
+      Origin = 'SwimClubID'
+    end
+    object qryMemberFName: TWideStringField
+      FieldName = 'FName'
+      Origin = 'FName'
+      ReadOnly = True
+      Size = 60
+    end
   end
   object qryLane: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'LaneNum;EntrantID'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
@@ -573,16 +640,11 @@ object SCM: TSCM
     UpdateOptions.EnableUpdate = False
     UpdateOptions.KeyFields = 'LaneID'
     SQL.Strings = (
-      'USE SwimClubMeet'
-      ''
-      ''
-      ''
       '-- Create a new table called '#39'[#Lanes]'#39' in schema '#39'[dbo]'#39
       '-- Drop the table if it already exists'
       'IF OBJECT_ID('#39'[dbo].[#Lanes]'#39', '#39'U'#39') IS NOT NULL'
       'DROP TABLE [dbo].[#Lanes]'
       ';'
-      ''
       ''
       '-- Create the table in the specified schema'
       'CREATE TABLE [dbo].[#Lanes]'
@@ -741,8 +803,8 @@ object SCM: TSCM
       '  WHERE [EntrantID] = @EntrantID AND [HeatID] = @HeatID;'
       ''
       ';')
-    Left = 240
-    Top = 128
+    Left = 248
+    Top = 120
     ParamData = <
       item
         Name = 'ENTRANTID'
@@ -756,6 +818,30 @@ object SCM: TSCM
         ParamType = ptInput
         Value = Null
       end>
+    object qryQualifyStateEntrantID: TFDAutoIncField
+      FieldName = 'EntrantID'
+      Origin = 'EntrantID'
+    end
+    object qryQualifyStateHeatID: TIntegerField
+      FieldName = 'HeatID'
+      Origin = 'HeatID'
+    end
+    object qryQualifyStateIsDisqualified: TBooleanField
+      FieldName = 'IsDisqualified'
+      Origin = 'IsDisqualified'
+      Required = True
+    end
+    object qryQualifyStateIsScratched: TBooleanField
+      FieldName = 'IsScratched'
+      Origin = 'IsScratched'
+      Required = True
+    end
+    object qryQualifyStateQualifyState: TIntegerField
+      FieldName = 'QualifyState'
+      Origin = 'QualifyState'
+      ReadOnly = True
+      Required = True
+    end
   end
   object qrySCMSystem: TFDQuery
     ActiveStoredUsage = [auDesignTime]
@@ -766,10 +852,30 @@ object SCM: TSCM
       'SELECT * FROM SCMSystem WHERE SCMSystemID = 1;')
     Left = 248
     Top = 264
+    object qrySCMSystemSCMSystemID: TFDAutoIncField
+      FieldName = 'SCMSystemID'
+      Origin = 'SCMSystemID'
+    end
+    object qrySCMSystemDBVersion: TIntegerField
+      FieldName = 'DBVersion'
+      Origin = 'DBVersion'
+    end
+    object qrySCMSystemMajor: TIntegerField
+      FieldName = 'Major'
+      Origin = 'Major'
+    end
+    object qrySCMSystemMinor: TIntegerField
+      FieldName = 'Minor'
+      Origin = 'Minor'
+    end
+    object qrySCMSystemBuild: TIntegerField
+      FieldName = 'Build'
+      Origin = 'Build'
+    end
   end
   object dsSCMSystem: TDataSource
     DataSet = qrySCMSystem
-    Left = 248
-    Top = 320
+    Left = 312
+    Top = 264
   end
 end

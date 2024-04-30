@@ -296,26 +296,12 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="dlgSCMOptions.pas">
-            <Form>scmOptions</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgSCMStopWatch.pas">
-            <Form>scmStopWatch</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="dlgSCMNominate.pas">
-            <Form>SCMNominate</Form>
-            <FormType>fmx</FormType>
-        </DCCReference>
-        <DCCReference Include="dmSCMNom.pas">
-            <Form>scmNom</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\SCM_SHARED\SCMUtility.pas"/>
         <DCCReference Include="..\SCM_SHARED\SCMSimpleConnect.pas"/>
         <DCCReference Include="..\SCM_SHARED\exeinfo.pas"/>
+        <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
+        <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
+        <DCCReference Include="ProgramSetting.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

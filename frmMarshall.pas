@@ -3,18 +3,62 @@ unit frmMarshall;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Classes,
   System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.ListView.Types, FMX.ListView.Appearances, FMX.ListView.Adapters.Base,
-  Data.Bind.EngExt, FMX.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
-  FMX.Bind.Editors, System.ImageList, FMX.ImgList, System.Actions, FMX.ActnList,
-  Data.Bind.Components, Data.Bind.DBScope, FMX.Objects, FMX.StdCtrls,
-  FMX.ListView, FMX.ListBox, FMX.Edit, FMX.Controls.Presentation,
-  FMX.TabControl, FMX.Layouts, dmSCM, System.Character,
-  System.IOUtils, Data.DB, FireDAC.Stan.Param, FMX.Effects, FMX.Filter.Effects;
+  System.Rtti,
+  System.Bindings.Outputs,
+  System.ImageList,
+  System.Actions,
+  System.Character,
+  System.IOUtils,
+
+  FMX.Types,
+  FMX.Controls,
+  FMX.Forms,
+  FMX.Graphics,
+  FMX.Dialogs,
+  FMX.ListView.Types,
+  FMX.ListView.Appearances,
+  FMX.ListView.Adapters.Base,
+  FMX.Bind.DBEngExt,
+  FMX.Bind.Editors,
+  FMX.ImgList,
+  FMX.ActnList,
+  FMX.Objects,
+  FMX.StdCtrls,
+  FMX.ListView,
+  FMX.ListBox,
+  FMX.Edit,
+  FMX.Controls.Presentation,
+  FMX.TabControl,
+  FMX.Layouts,
+  FMX.Effects,
+  FMX.Filter.Effects,
+  FMX.Media,
+
+  XSuperJSON,
+  XSuperObject,
+
+  Data.DB,
+  Data.Bind.EngExt,
+  Data.Bind.Components,
+  Data.Bind.DBScope,
+  FireDAC.Stan.Param,
+
+  dmSCM,
+  ProgramSetting;
 
 type
+
+  TDefaultFont = class(TInterfacedObject, IFMXSystemFontService)
+  public
+    function GetDefaultFontFamilyName: string;
+    function GetDefaultFontSize: Single;
+  end;
+
   TMarshall = class(TForm)
     ActionList1: TActionList;
     actnConnect: TAction;
@@ -23,16 +67,10 @@ type
     actnRefresh: TAction;
     actnSCMOptions: TAction;
     AniIndicator1: TAniIndicator;
-    BindingsList1: TBindingsList;
-    BS_qryEntrant: TBindSourceDB;
-    BS_qryEvent: TBindSourceDB;
-    BS_qryHeat: TBindSourceDB;
-    BS_qryLane: TBindSourceDB;
-    BS_qrySession: TBindSourceDB;
-    BS_tblSwimClub: TBindSourceDB;
+    bsEntrant: TBindSourceDB;
+    bsLane: TBindSourceDB;
     btnConnect: TButton;
     btnDisconnect: TButton;
-    btnOptions: TButton;
     btnRefresh: TButton;
     btnRTN: TButton;
     chkbUseOSAuthentication: TCheckBox;
@@ -44,23 +82,18 @@ type
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
-    ImageList1: TImageList;
-    imgStopWatch: TImage;
     Label1: TLabel;
     Label12: TLabel;
     Label18: TLabel;
     Label2: TLabel;
-    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     layCenteredButtons: TLayout;
     layConnectButtons: TLayout;
     layEntrantList: TLayout;
-    layEntrantListTitleBar: TLayout;
     layEntrantName: TLayout;
     layEntrantRaceTime: TLayout;
     layEventHeat: TLayout;
@@ -76,7 +109,6 @@ type
     layRaceTime: TLayout;
     layRaceTimeDetail: TLayout;
     layRaceTimeText: TLayout;
-    layRaceTimeTitleBar: TLayout;
     laySelectSession: TLayout;
     layStoredRaceTime: TLayout;
     laySummary: TLayout;
@@ -87,9 +119,8 @@ type
     lblAniIndicatorStatus: TLabel;
     lblConnectionStatus: TLabel;
     lblEntrantName: TLabel;
-    lblEntrantsHeatNum: TLabel;
-    lblEvent: TLabel;
-    lblHeat: TLabel;
+    lblEventTitle: TLabel;
+    lblHeatTitle: TLabel;
     lblHeatNumber: TLabel;
     lblLaneNumber: TLabel;
     lblPersonalBest: TLabel;
@@ -101,22 +132,6 @@ type
     lblSessionTitle: TLabel;
     lblSwimClubTitle: TLabel;
     lblTimeToBeat: TLabel;
-    LinkListControlToField1: TLinkListControlToField;
-    LinkListControlToField2: TLinkListControlToField;
-    LinkListControlToField3: TLinkListControlToField;
-    LinkListControlToField4: TLinkListControlToField;
-    LinkPropertyToFieldClubName: TLinkPropertyToField;
-    LinkPropertyToFieldSessionDate: TLinkPropertyToField;
-    LinkPropertyToFieldText: TLinkPropertyToField;
-    LinkPropertyToFieldText10: TLinkPropertyToField;
-    LinkPropertyToFieldText2: TLinkPropertyToField;
-    LinkPropertyToFieldText3: TLinkPropertyToField;
-    LinkPropertyToFieldText4: TLinkPropertyToField;
-    LinkPropertyToFieldText5: TLinkPropertyToField;
-    LinkPropertyToFieldText6: TLinkPropertyToField;
-    LinkPropertyToFieldText7: TLinkPropertyToField;
-    LinkPropertyToFieldText8: TLinkPropertyToField;
-    LinkPropertyToFieldText9: TLinkPropertyToField;
     ListViewEvent: TListView;
     ListViewHeat: TListView;
     ListViewLane: TListView;
@@ -125,7 +140,6 @@ type
     MonochromeEffect3: TMonochromeEffect;
     ScaledLayout1: TScaledLayout;
     SizeGrip1: TSizeGrip;
-    StyleBook2: TStyleBook;
     TabControl1: TTabControl;
     tabEntrantRaceTime: TTabItem;
     tabEventHeat: TTabItem;
@@ -133,6 +147,29 @@ type
     Timer1: TTimer;
     txt01: TLabel;
     txt03: TLabel;
+    bindlist: TBindingsList;
+    bsSwimClub: TBindSourceDB;
+    bsSession: TBindSourceDB;
+    bsEvent: TBindSourceDB;
+    bsHeat: TBindSourceDB;
+    LinkListControlToField5: TLinkListControlToField;
+    LinkPropertyToFieldText11: TLinkPropertyToField;
+    LinkPropertyToFieldText12: TLinkPropertyToField;
+    LinkPropertyToFieldText13: TLinkPropertyToField;
+    LinkListControlToField6: TLinkListControlToField;
+    LinkListControlToField7: TLinkListControlToField;
+    LinkListControlToField8: TLinkListControlToField;
+    LinkPropertyToFieldText15: TLinkPropertyToField;
+    LinkPropertyToFieldText16: TLinkPropertyToField;
+    chkbHideClosedSessions: TCheckBox;
+    LinkPropertyToFieldText: TLinkPropertyToField;
+    StyleBook1: TStyleBook;
+    LinkPropertyToFieldFNameStr: TLinkPropertyToField;
+    LinkPropertyToFieldText3: TLinkPropertyToField;
+    LinkPropertyToFieldText4: TLinkPropertyToField;
+    LinkPropertyToFieldText5: TLinkPropertyToField;
+    LinkPropertyToFieldText6: TLinkPropertyToField;
+    StyleBook2: TStyleBook;
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);
     procedure actnDisconnectExecute(Sender: TObject);
@@ -141,7 +178,6 @@ type
     procedure actnQualifyUpdate(Sender: TObject);
     procedure actnRefreshExecute(Sender: TObject);
     procedure actnRefreshUpdate(Sender: TObject);
-    procedure actnSCMOptionsExecute(Sender: TObject);
     procedure actnSCMOptionsUpdate(Sender: TObject);
     procedure cmbSessionListChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -154,47 +190,34 @@ type
     procedure ListViewLaneChange(Sender: TObject);
     procedure ListViewLaneItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
-    procedure ListViewLaneUpdateObjects(const Sender: TObject;
-      const AItem: TListViewItem);
     procedure TabControl1Change(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+
   private
-  const
-    CONNECTIONTIMEOUT = 48;
-    SCMCONFIGFILENAME = 'SCMConfig.ini';
-  var
+
     fConnectionCountdown: Integer;
-    { Private declarations }
-    fEnableAutoReFresh: Boolean;
-    fEnableNomination: Boolean;
-    fHideClosedSessions: Boolean;
+
     procedure ConnectOnTerminate(Sender: TObject);
     procedure GetSCMVerInfo();
-    procedure LoadConfigData;
-    procedure SaveConfigData;
-    function scmGetBigButtonsEffect: Integer;
     procedure scmPostQualify(AQualifyStatus: Integer);
     procedure scmSetBigButtonsEffect(btnTag: Integer);
-    procedure SimpleLoadSettingString(ASection, AName: String;
-      var AValue: String);
-    procedure SimpleSaveSettingString(ASection, AName, AValue: String);
+    function scmGetBigButtonsEffect: Integer;
+
+    // Universal platform - Program Settings
+    procedure LoadFromSettings;
+    procedure LoadSettings;
+    procedure SaveToSettings;
+
   public
-  const
-  SectionName = 'Marshall';
     { Public declarations }
-    procedure scmOptionsLoad;
     procedure scmRefreshBigButtons;
     procedure scmRefreshEntrant_Detail;
     procedure scmRefreshLane;
     procedure scmUpdateHideClosedSessions;
-    // procedure scmRefresh_tabEntrantRaceTime;
-    procedure scmUpdateNomination(EnableNomination: Boolean);
-    procedure scmUpdateTabSheetsImages;
-    property EnableNomination: Boolean read fEnableNomination;
-    property HideClosedsessions: Boolean read fHideClosedSessions;
-end;
 
-
+  const
+    CONNECTIONTIMEOUT = 20;
+  end;
 
 var
   Marshall: TMarshall;
@@ -208,11 +231,15 @@ uses
   // needed for call to winapi MessageBeep & Beep
   Winapi.Windows,
 {$ENDIF}
-  dlgSCMOptions, dlgSCMStopWatch,
+  // dlgSCMStopWatch,
   // FOR scmLoadOptions
   System.IniFiles,
   // FOR Floor
-  System.Math, dlgSCMNominate, exeinfo, SCMSimpleConnect, SCMUtility;
+  System.Math,
+  // dlgSCMNominate,
+  exeinfo,
+  SCMSimpleConnect,
+  SCMUtility;
 
 {$REGION 'ACTION MANAGER'}
 
@@ -275,12 +302,10 @@ begin
     SCM.scmConnection.Connected := false;
     lblConnectionStatus.Text := 'No connection.';
   end;
-  // Hides..unhides visibility of icons in tabLoginSession
-  scmUpdateTabSheetsImages;
   AniIndicator1.Visible := false;
   lblAniIndicatorStatus.Visible := false;
   AniIndicator1.Enabled := false;
-
+  SaveToSettings;
 end;
 
 procedure TMarshall.actnDisconnectUpdate(Sender: TObject);
@@ -405,57 +430,9 @@ end;
 // 2. Then pass an instance of this class to ShowModal:
 // ---------------------------------------------------------------------------
 
-procedure TMarshall.actnSCMOptionsExecute(Sender: TObject);
-var
-  dlg: TscmOptions;
-begin
-{$IFNDEF ANDROID}
-  dlg := TscmOptions.Create(self);
-  dlg.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      // ... Do something.
-
-      // Always reload SCM options from the scmConfig.ini file.
-      // There is no CANCEL for this modal form. What ever the user does,
-      // the input values are accepted.
-      scmOptionsLoad;
-      // update the visibility of the accessory item in the ListViewLane
-      // safe - doesn't require connection.
-      scmUpdateNomination(fEnableNomination);
-      // little status images used on the tabsheets
-      scmUpdateTabSheetsImages;
-      // Update the visibility of closed sessions in qrySession
-      // by modifying it's param HIDECLOSED.
-      // This uses value fHideClosedSessions and is best done after a fresh
-      // read of the scmConfig.ini values.
-      scmUpdateHideClosedSessions;
-      // update the visibility of the accessory icon
-      if fEnableNomination then
-        ListViewLane.ItemAppearanceObjects.ItemObjects.Accessory.Visible := true
-      else
-        ListViewLane.ItemAppearanceObjects.ItemObjects.Accessory.
-          Visible := false;
-
-      // Update GUI state
-      actnSCMOptionsUpdate(self);
-    end);
-
-{$ELSE}
-  { TODO : Create an android popup window for options? }
-  // ANDROID platform doesn't do Modal Forms.
-{$ENDIF}
-  (*
-    IMPORTANT NOTE : DIALOGUE IS DESTROYED IN TscmOption.FormClose
-  *)
-end;
-
 procedure TMarshall.actnSCMOptionsUpdate(Sender: TObject);
 begin
-  // if (Assigned(SCM) and SCM.IsActive) then
-  // ListViewLane.Enabled := true
-  // else
-  // ListViewLane.Enabled := true;
+
 end;
 
 {$ENDREGION}
@@ -498,84 +475,79 @@ begin
   // FINAL CHECKS
   if (Assigned(SCM) and (SCM.scmConnection.Connected = false)) then
   begin
-    lblConnectionStatus.Text := 'A connection couldn''t be made. (Check you input values.)';
+    lblConnectionStatus.Text :=
+      'A connection couldn''t be made. (Check you input values.)';
   end;
 
-  // Toggles visibility of icons in tabLoginSession.
-  scmUpdateTabSheetsImages;
   // Label showing application and database version
   GetSCMVerInfo;
+  // connection buttons visibility state updated.
+  actnConnect.Update;
+  actnDisconnect.Update;
+
+  // VERY SICK OF BIND COMPONETS BREAKING!
+  if Assigned(SCM) and SCM.IsActive then
+  begin
+    if not Assigned(bsSwimClub.DataSet) then
+      bsSwimClub.DataSet := SCM.tblSwimClub;
+    if not Assigned(bsSession.DataSet) then
+      bsSession.DataSet := SCM.qrySession;
+    if not Assigned(bsEvent.DataSet) then
+      bsEvent.DataSet := SCM.qryEvent;
+    if not Assigned(bsHeat.DataSet) then
+      bsHeat.DataSet := SCM.qryHeat;
+    if not Assigned(bsEntrant.DataSet) then
+      bsEntrant.DataSet := SCM.qryEntrant;
+    if not Assigned(bsLane.DataSet) then
+      bsLane.DataSet := SCM.qryLane;
+  end;
+
+  // Update the visibility of closed sessions in qrySession
+  // by modifying it's param HIDECLOSED.
+  // This uses value fHideClosedSessions and is best done after a fresh
+  // read of JSON values.
+  scmUpdateHideClosedSessions;
 
 end;
 
 procedure TMarshall.FormCreate(Sender: TObject);
-var
-  AValue, ASection, AName: String;
-
 begin
   // Initialization of params.
   application.ShowHint := true;
-  ASection := 'MSSQL_SwimClubMeet';
   AniIndicator1.Visible := false;
   AniIndicator1.Enabled := false;
   btnDisconnect.Visible := false;
   fConnectionCountdown := CONNECTIONTIMEOUT;
-  fEnableNomination := false;
   Timer1.Enabled := false;
   lblAniIndicatorStatus.Visible := false;
-
-  // note cmbSessionList.Clear doesn't work here.
   cmbSessionList.Items.Clear;
+  chkbHideClosedSessions.IsChecked := true;
 
   // clean-up the top bar captions
-  lblSwimClubTitle.Text := String.Empty;
-  lblSessionTitle.Text := String.Empty;
-  lblSelectedEvent.Text := String.Empty;
-  lblSelectedEntrant.Text := String.Empty;
+  // lblSwimClubTitle.Text := String.Empty;
+  // lblSessionTitle.Text := String.Empty;
+  // lblSelectedEvent.Text := String.Empty;
+  // lblSelectedEntrant.Text := String.Empty;
 
-  // clean-up TabSheet3
-  lblEntrantsHeatNum.Text := 'Entrants ...';
-
-  // ON CREATION SETS - SCM->scmConnection->Active = false;
-//  if NOT Assigned(SCM) then
-//    SCM := TSCM.Create(self);
-
-  // Read last successful connection params and load into controls
-  {
-  AName := 'Server';
-  edtServerName.Text := LoadSharedIniFileSetting(ASection, AName);
-  AName := 'User';
-  edtUser.Text := LoadSharedIniFileSetting(ASection, AName);
-  AName := 'Password';
-  edtPassword.Text := LoadSharedIniFileSetting(ASection, AName);
-  AName := 'OsAuthent';
-  AValue := LoadSharedIniFileSetting(ASection, AName);
-  }
-
-  LoadConfigData;
-
-  if ((UpperCase(AValue) = 'YES') or (UpperCase(AValue) = 'TRUE')) then
-    chkbUseOSAuthentication.IsChecked := true
-  else
-    chkbUseOSAuthentication.IsChecked := false;
+  // C R E A T E   T H E   D A T A M O D U L E .
+  if NOT Assigned(SCM) then
+    SCM := TSCM.Create(Self);
+  If Assigned(SCM) then
+  begin
+    SCM.scmConnection.Params.Values['LoginTimeOut'] :=
+      IntToStr(CONNECTIONTIMEOUT);
+    // JSON connection settings. Windows location :
+    // %SYSTEMDRIVE\%%USER%\%USERNAME%\AppData\Roaming\Artanemus\SwimClubMeet
+    // P O P U L A T E   T H E   C O N N E C T I O N   C O N T R O L S .
+    LoadSettings;
+  end;
 
   // Connection status - located in footer bar.
   lblConnectionStatus.Text := '';
 
   // Login-Session
   TabControl1.TabIndex := 0;
-  // read user options
-  scmOptionsLoad;
-  // update the visibility of the accessory item in the ListViewLane
-  // safe - doesn't require connection.
-  scmUpdateNomination(fEnableNomination);
-  // update the images to use in each tabsheet
-  scmUpdateTabSheetsImages;
-  // Update the visibility of closed sessions in qrySession
-  // by modifying it's param HIDECLOSED.
-  // This uses value fHideClosedSessions and is best done after a fresh
-  // read of the scmConfig.ini values.
-  scmUpdateHideClosedSessions;
+
   // TIDY ALL TLISTVIEW DISPLAYS - (fixes TViewListLane)
   // on startup SCM will be set to disconnected.
   if Assigned(SCM) then
@@ -586,20 +558,23 @@ begin
   // Hide big buttons.
   scmRefreshBigButtons;
 
+  actnConnect.Visible := true;
+  actnDisconnect.Visible := false;
+
 end;
 
 procedure TMarshall.FormDestroy(Sender: TObject);
 begin
-  SaveConfigData;
+  if Assigned(SCM) then
+  begin
+    if SCM.scmConnection.Connected then
+    begin
+      SaveToSettings;
+      SCM.scmConnection.Connected := false;
+    end;
+   SCM.Free;
+  end;
 
-  // IF DATA-MODULE EXISTS ... break the current connection.
-//  if Assigned(SCM) then
-//  begin
-//    SCM.DeActivateTable;
-//    SCM.scmConnection.Connected := false;
-//  end;
-  // CLEAN MEMORY
-  // SCM.Free;
 end;
 
 procedure TMarshall.GetSCMVerInfo;
@@ -618,9 +593,8 @@ begin
 
 {$IF defined(MSWINDOWS)}
   // get the application version number
-  myExeInfo := TExeInfo.Create(self);
-  Label4.Text := 'App v' + myExeInfo.FileVersion + ' - ' +
-    Label4.Text;
+  myExeInfo := TExeInfo.Create(Self);
+  Label4.Text := 'App v' + myExeInfo.FileVersion + ' - ' + Label4.Text;
   myExeInfo.Free;
 
 {$ENDIF}
@@ -632,19 +606,18 @@ begin
 end;
 
 procedure TMarshall.imgStopWatchClick(Sender: TObject);
-var
-  dlg: TscmStopWatch;
+// var
+// dlg: TscmStopWatch;
 begin
 {$IFNDEF ANDROID}
-  dlg := TscmStopWatch.Create(self);
-  dlg.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      // Do something.
-      if (ModalResult = mrOk) then
-      begin;
-      end;
-    end);
+  // dlg := TscmStopWatch.Create(Self);
+  // dlg.ShowModal(
+  // procedure(ModalResult: TModalResult)
+  // begin
+  // if (ModalResult = mrOk) then
+  // begin;
+  // end;
+  // end);
 
 {$ELSE}
   { TODO : Create an android slidebar window for options? }
@@ -688,7 +661,7 @@ begin
   // NOTE: Big Buttons are made invisible if lane is EMPTY
   scmRefreshBigButtons;
   // ASSERT the button state for 'Post Qualify Status'
-  actnQualifyUpdate(self);
+  actnQualifyUpdate(Self);
 
   // clean the statusbar
   lblConnectionStatus.Text := '';
@@ -697,160 +670,109 @@ end;
 procedure TMarshall.ListViewLaneItemClickEx(const Sender: TObject;
 ItemIndex: Integer; const LocalClickPos: TPointF;
 const ItemObject: TListItemDrawable);
-var
-  dlg: TscmNominate;
-  MemberID: Integer;
+// var
+// dlg: TscmNominate;
+// MemberID: Integer;
 begin
   // NOTE: The object must be visible to accept user input (click).
   // NOTE: The object will be visible if the lane is EMPTY.
   // Ignore this routine if nomination hasn't been enabled.
-  if fEnableNomination then
-  begin
+  // if fEnableNomination then
+  // begin
 {$IFNDEF ANDROID}
-    // REQUIRES A CONNECTION
-    if ItemObject is TListItemAccessory then
-    begin
-      if (Assigned(SCM) and SCM.IsActive) then
-      begin
-        // must be an empty lane
-        if SCM.qryLane.Active then
-        begin
-          MemberID :=  SCM.qryLane.FieldByName('MemberID').AsInteger;
-          if (MemberID = 0) then
-          begin
-            // Dialogue to select a member (who isn't an entrant in this event)
-            dlg := TscmNominate.Create(self);
-            dlg.EventID := SCM.qryLane.FieldByName('EventID').AsInteger;
-            //dlg.HeatID := SCM.qryLane.FieldByName('HeatID').AsInteger;
-            // NOTE: the LaneID can resolve both event and heat ...
-            // dlg.LaneNum := SCM.qryLane.FieldByName('LaneNum').AsInteger;
-            // open the SCM Nomination dialogue.
-            dlg.ShowModal(
-              procedure(dlgModalResult: TModalResult)
-              begin
-                if dlgModalResult = mrOk then
-                begin
-                  // Update the UI of the tabSheet.
-                  scmRefreshLane;
-                end;
-              end);
-          end;
-        end;
-      end;
-    end;
+  // REQUIRES A CONNECTION
+  // if ItemObject is TListItemAccessory then
+  // begin
+  // if (Assigned(SCM) and SCM.IsActive) then
+  // begin
+  // must be an empty lane
+  // if SCM.qryLane.Active then
+  // begin
+  // MemberID := SCM.qryLane.FieldByName('MemberID').AsInteger;
+  // if (MemberID = 0) then
+  // begin
+  // Dialogue to select a member (who isn't an entrant in this event)
+  // dlg := TscmNominate.Create(Self);
+  // dlg.EventID := SCM.qryLane.FieldByName('EventID').AsInteger;
+  // dlg.HeatID := SCM.qryLane.FieldByName('HeatID').AsInteger;
+  // NOTE: the LaneID can resolve both event and heat ...
+  // dlg.LaneNum := SCM.qryLane.FieldByName('LaneNum').AsInteger;
+  // open the SCM Nomination dialogue.
+  // dlg.ShowModal(
+  // procedure(dlgModalResult: TModalResult)
+  // begin
+  // if dlgModalResult = mrOk then
+  // begin
+  // Update the UI of the tabSheet.
+  // scmRefreshLane;
+  // end;
+  // end);
+  // end;
+  // end;
+  // end;
+  // end;
 
 {$ELSE}
-    { TODO : Create an android popup window for options? }
-    // ANDROID platform doesn't do Modal Forms.
+  { TODO : Create an android popup window for options? }
+  // ANDROID platform doesn't do Modal Forms.
 {$ENDIF}
-    (*
-      IMPORTANT NOTE : DIALOGUE IS DESTROYED IN TscmNominate.OnClose
-    *)
+  (*
+    IMPORTANT NOTE : DIALOGUE IS DESTROYED IN TscmNominate.OnClose
+  *)
+  // end;
+
+end;
+
+procedure TMarshall.LoadSettings;
+begin
+  if Settings = nil then
+    Settings := TPrgSetting.Create;
+
+  if not FileExists(Settings.GetDefaultSettingsFilename()) then
+  begin
+    ForceDirectories(Settings.GetSettingsFolder());
+    Settings.SaveToFile();
   end;
 
+  Settings.LoadFromFile();
+  LoadFromSettings();
 end;
 
-procedure TMarshall.ListViewLaneUpdateObjects(const Sender: TObject;
-const AItem: TListViewItem);
-var
-  obj: TListItemAccessory;
+// load UI components from settings
+procedure TMarshall.LoadFromSettings();
 begin
-  // obj := AItem.View.FindDrawable('Accessory') ;
-  obj := AItem.Objects.AccessoryObject;
-  if Assigned(obj) then
+  edtServerName.Text := Settings.Server;
+  edtUser.Text := Settings.User;
+  edtPassword.Text := Settings.Password;
+  chkbUseOSAuthentication.IsChecked := Settings.OSAuthent;
+  chkbHideClosedSessions.IsChecked := Settings.MarshallHideClosedSessions;
+  if Assigned(SCM) then
   begin
-    if fEnableNomination then
-      obj.Visible := true
+    if (Settings.LoginTimeOut = 0) then // lets NOT use infinate timeout
+      SCM.scmConnection.Params.Values['LoginTimeOut'] := IntToStr(CONNECTIONTIMEOUT)
     else
-      obj.Visible := false;
-  end;
-end;
-
-procedure TMarshall.LoadConfigData;
-var
-  ASection: string;
-  Server: string;
-  User: string;
-  Password: string;
-  AValue: string;
-  AName: string;
-
-begin
-  ASection := SectionName;
-  AName := 'Server';
-  SimpleLoadSettingString(ASection, AName, Server);
-  if Server.IsEmpty then
-    edtServerName.Text := 'localHost\SQLEXPRESS'
-  else
-    edtServerName.Text := Server;
-  AName := 'User';
-  SimpleLoadSettingString(ASection, AName, User);
-  edtUser.Text := User;
-  AName := 'Password';
-  SimpleLoadSettingString(ASection, AName, Password);
-  edtPassword.Text := Password;
-  AName := 'OSAuthent';
-  SimpleLoadSettingString(ASection, AName, AValue);
-  if (Pos('y', AValue) <> 0) or (Pos('Y', AValue) <> 0) then
-    chkbUseOSAuthentication.IsChecked := true
-  else
-    chkbUseOSAuthentication.IsChecked := false;
-end;
-
-procedure TMarshall.SaveConfigData;
-var
-  ASection, AName, AValue: String;
-begin
-  begin
-    ASection := SectionName;
-    AName := 'Server';
-    SimpleSaveSettingString(ASection, AName, edtServerName.Text);
-    AName := 'User';
-    SimpleSaveSettingString(ASection, AName, edtUser.Text);
-    AName := 'Password';
-    SimpleSaveSettingString(ASection, AName, edtPassword.Text);
-    AName := 'OSAuthent';
-    if chkbUseOSAuthentication.IsChecked = true then
-      AValue := 'Yes'
-    else
-      AValue := 'No';
-    SimpleSaveSettingString(ASection, AName, AValue);
+      SCM.scmConnection.Params.Values['LoginTimeOut'] := IntToStr(Settings.LoginTimeOut);
   end
-
 end;
 
-procedure TMarshall.SimpleLoadSettingString(ASection, AName: String;
-  var AValue: String);
-var
-  ini: TIniFile;
+// Save UI components state to settings
+procedure TMarshall.SaveToSettings();
 begin
-  // Note: OneDrive enabled: 'Personal'
-  // The routine TPath.GetDocumentsPath normally returns ...
-  // C:\Users\<username>\Documents (Windows Vista or later)
-  // but is instead mapped to C:\Users\<username>\OneDrive\Documents.
-  //
-  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
-    SCMCONFIGFILENAME);
-  try
-    AValue := ini.ReadString(ASection, AName, '');
-  finally
-    ini.Free;
-  end;
-end;
+  Settings.Server := edtServerName.Text;
+  Settings.User := edtUser.Text;
+  Settings.Password := edtPassword.Text;
+  if chkbUseOSAuthentication.IsChecked then
+    Settings.OSAuthent := true
+  else
+    Settings.OSAuthent := false;
+  Settings.MarshallHideClosedSessions := chkbHideClosedSessions.IsChecked;
 
-procedure TMarshall.SimpleSaveSettingString(ASection, AName,
-  AValue: String);
-var
-  ini: TIniFile;
-begin
-  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
-    SCMCONFIGFILENAME);
-  try
-    ini.WriteString(ASection, AName, AValue);
-  finally
-    ini.Free;
-  end;
+  if Assigned(SCM)then
+    Settings.LoginTimeOut :=
+      StrToIntDef(SCM.scmConnection.Params.Values['LoginTimeOut'],
+      CONNECTIONTIMEOUT);
 
+    Settings.SaveToFile;
 end;
 
 procedure TMarshall.TabControl1Change(Sender: TObject);
@@ -858,10 +780,6 @@ begin
   case TabControl1.TabIndex of
     0:
       lblConnectionStatus.Text := '';
-    1:
-      // each time EVENT..HEAT tabsheet is selected ... refresh data
-      if (fEnableAutoReFresh) then
-        actnRefreshExecute(self);
     2:
       begin
         lblConnectionStatus.Text := '';
@@ -878,32 +796,15 @@ begin
   lblAniIndicatorStatus.Text := 'Connecting ' + IntToStr(fConnectionCountdown);
 end;
 
-
 {$REGION 'MISC SCM Declarations' }
 
 function TMarshall.scmGetBigButtonsEffect: Integer;
 begin
   Result := 1;
-  if (MonochromeEffect1.Enabled and MonochromeEffect3.Enabled) then Result := 2;
-  if (MonochromeEffect1.Enabled and MonochromeEffect2.Enabled) then Result := 3;
-end;
-
-procedure TMarshall.scmOptionsLoad;
-var
-  ini: TIniFile;
-  Section: String;
-begin
-  Section := 'MarshallOptions';
-  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
-    SCMCONFIGFILENAME);
-  try
-    fEnableAutoReFresh := ini.ReadBool(Section, 'EnableAutoReFresh', false);
-    fEnableNomination := ini.ReadBool(Section, 'EnableNomination', false);
-    fHideClosedSessions := ini.ReadBool(Section, 'HideClosedSessions', true);
-  finally
-    ini.Free;
-  end;
-
+  if (MonochromeEffect1.Enabled and MonochromeEffect3.Enabled) then
+    Result := 2;
+  if (MonochromeEffect1.Enabled and MonochromeEffect2.Enabled) then
+    Result := 3;
 end;
 
 procedure TMarshall.scmPostQualify(AQualifyStatus: Integer);
@@ -986,18 +887,6 @@ begin
   end;
 end;
 
-procedure TMarshall.scmUpdateNomination(EnableNomination: Boolean);
-begin
-  // Toggle the display of the TListItemAccessory
-  // Doesn't require connection.
-  if EnableNomination then
-    // ENABLED
-    ListViewLane.ItemAppearanceObjects.ItemObjects.Accessory.Visible := true
-  else
-    // DISABLED (default)
-    ListViewLane.ItemAppearanceObjects.ItemObjects.Accessory.Visible := false;
-end;
-
 procedure TMarshall.scmSetBigButtonsEffect(btnTag: Integer);
 begin
   case btnTag of
@@ -1033,7 +922,8 @@ begin
     cmbSessionList.Items.Clear;
     SCM.qrySession.Close;
     // ASSIGN PARAM to display or hide CLOSED sessions
-    SCM.qrySession.ParamByName('HIDECLOSED').AsBoolean := fHideClosedSessions;
+    SCM.qrySession.ParamByName('HIDECLOSED').AsBoolean :=
+      chkbHideClosedSessions.IsChecked;
     SCM.qrySession.Prepare;
     SCM.qrySession.Open;
     SCM.qrySession.EnableControls
@@ -1042,48 +932,11 @@ begin
   else if (Assigned(SCM)) then
   begin
     // qrySession ISN'T ACTIVE ....
-    // update state of qryLane PARAM
-    SCM.qrySession.ParamByName('HIDECLOSED').AsBoolean := fHideClosedSessions;
   end;
 
-end;
-
-procedure TMarshall.scmUpdateTabSheetsImages;
-begin
-  // Update image indicators in the tabsheets.
-  if (Assigned(SCM) and SCM.IsActive) then
-  begin
-    if (fEnableNomination) then
-    begin
-      if (fEnableNomination) then
-        // small red pin on tabsheet
-        tabEntrantRaceTime.ImageIndex := 1
-      else
-        // small white pin on tabsheet
-        tabEntrantRaceTime.ImageIndex := 0
-    end;
-
-    if (fHideClosedSessions) then
-      tabLoginSession.ImageIndex := 3
-    else
-      tabLoginSession.ImageIndex := 2;
-
-    if (fEnableAutoReFresh) then
-      tabEventHeat.ImageIndex := 4
-    else
-      tabEventHeat.ImageIndex := -1;
-  end
-  // Not connect - hide all
-  else
-  begin
-    tabEntrantRaceTime.ImageIndex := -1;
-    tabLoginSession.ImageIndex := -1;
-    tabEventHeat.ImageIndex := -1;
-  end;
 end;
 
 {$ENDREGION}
-
 {$REGION 'SCM REFRESH ROUTINES (x3).' }
 
 // Calling scmRefreshLane will refresh entrant details and big buttons.
@@ -1226,5 +1079,20 @@ begin
 end;
 
 {$ENDREGION}
+{ TDefaultFont }
+
+function TDefaultFont.GetDefaultFontFamilyName: string;
+begin
+  Result := 'Tahoma';
+end;
+
+function TDefaultFont.GetDefaultFontSize: Single;
+begin
+  Result := 16.0; // Set the default font size here
+end;
+
+initialization
+
+TFont.FontService := TDefaultFont.Create;
 
 end.
