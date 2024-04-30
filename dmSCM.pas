@@ -117,6 +117,7 @@ type
     qryEntrantFNameStr: TWideStringField;
     qryEntrantQualifiedStatus: TStringField;
     qryEntrantHeatNumLaneFNameStr: TWideStringField;
+    qryEntrantLastNameStr: TWideStringField;
     procedure qryHeatAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
 

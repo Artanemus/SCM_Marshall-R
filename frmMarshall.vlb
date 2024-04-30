@@ -8,15 +8,8 @@ Coordinates=501,1050,89,58
 Coordinates=60,90,98,58
 Visible=True
 
-[layTitle]
-Coordinates=538,1196,56,36
-Visible=True
-
 [layConnectButtons]
 Coordinates=1429,1134,123,36
-
-[layTopBar]
-Coordinates=1220,1196,73,36
 
 [AniIndicator1]
 Coordinates=686,1134,90,36
@@ -43,22 +36,12 @@ Coordinates=49,1534,78,36
 [Label9]
 Coordinates=979,772,53,58
 
-[lblSelectedEntrant]
-Coordinates=10,186,119,58
-Visible=True
-
 [MonochromeEffect3]
 Coordinates=911,111,129,36
-
-[Label2]
-Coordinates=1249,772,53,58
 
 [ListViewLane]
 Coordinates=847,501,107,168
 Visible=True
-
-[lblSelectedEvent]
-Coordinates=10,567,111,58
 
 [edtUser]
 Coordinates=10,966,60,58
@@ -69,9 +52,6 @@ Coordinates=1134,1196,60,36
 [btnRTN]
 Coordinates=1435,966,59,58
 
-[laySummary]
-Coordinates=1317,1134,86,36
-
 [lblEntrantName]
 Coordinates=370,290,103,58
 
@@ -81,10 +61,6 @@ Visible=True
 
 [txt03]
 Coordinates=623,772,43,58
-
-[lblLaneNumber]
-Coordinates=503,556,102,58
-Visible=True
 
 [layEntrantList]
 Coordinates=170,1134,93,36
@@ -97,9 +73,6 @@ Coordinates=1520,966,57,58
 
 [lblPersonalBest]
 Coordinates=20,320,104,58
-
-[txt01]
-Coordinates=1328,772,43,58
 
 [tabLoginSession]
 Coordinates=887,1196,110,36
@@ -142,9 +115,6 @@ Coordinates=408,1196,104,36
 [TabControl1]
 Coordinates=1023,1196,85,36
 
-[layCenteredButtons]
-Coordinates=1483,1196,128,36
-
 [Label12]
 Coordinates=771,772,60,58
 
@@ -162,12 +132,6 @@ Coordinates=857,772,96,58
 
 [Label7]
 Coordinates=415,772,53,58
-
-[layLane]
-Coordinates=616,1050,60,36
-
-[lblHeatNumber]
-Coordinates=1098,304,100,58
 
 [tabEventHeat]
 Coordinates=151,1196,92,36
@@ -222,9 +186,6 @@ Coordinates=802,1134,127,36
 [layRaceTime]
 Coordinates=1068,1134,89,36
 
-[lblSessionTitle]
-Coordinates=980,545,98,58
-
 [actnConnect]
 Coordinates=219,1630,87,36
 
@@ -269,7 +230,7 @@ Coordinates=213,1050,104,58
 Coordinates=710,966,165,58
 
 []
-Coordinates=911,1596,77,36
+Coordinates=374,364,80,36
 Visible=True
 
 [SCM.tblSwimClub]
@@ -333,28 +294,25 @@ Coordinates=12,464,107,36
 Coordinates=435,635,98,213
 
 [bsLane]
-Coordinates=685,446,82,278
+Coordinates=685,446,64,256
 
 [bsEntrant]
-Coordinates=209,10,142,424
+Coordinates=209,10,142,402
 
 [bsEvent]
-Coordinates=201,446,89,300
+Coordinates=201,446,89,278
 
 [bsSwimClub]
-Coordinates=567,10,129,366
+Coordinates=567,10,129,344
 
 [bsSession]
-Coordinates=1158,446,101,256
+Coordinates=1158,446,101,234
 
 [bsHeat]
-Coordinates=934,51,81,256
+Coordinates=934,51,81,234
 
 [bindlist]
 Coordinates=117,71,55,36
-
-[StyleBook1]
-Coordinates=374,364,80,36
 
 [lblEventTitle]
 Coordinates=337,966,85,58
@@ -366,5 +324,5 @@ Coordinates=1659,772,80,58
 Coordinates=389,419,80,36
 
 [chkbHideClosedSessions]
-Coordinates=231,966,80,58
+Coordinates=231,966,160,58
 

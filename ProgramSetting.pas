@@ -23,6 +23,7 @@ type
     Password: string;
     OSAuthent: boolean;
     MarshallHideClosedSessions: boolean;
+    UseFINAcodes: boolean;
     LoginTimeOut: integer;
 
     constructor Create();
@@ -33,6 +34,9 @@ type
 
     { published declarations }
   end;
+
+  const
+    CONNECTIONTIMEOUT = 20;  // default is 0 - infinate...
 
 var
   Settings: TPrgSetting;
@@ -46,7 +50,8 @@ begin
   Password := '';
   OSAuthent := false;
   MarshallHideClosedSessions := true;
-  LoginTimeOut := 0; // infinate
+  UseFINAcodes := false;
+  LoginTimeOut := CONNECTIONTIMEOUT;
 
   {
   ForceDirectories creates a new directory as specified in Dir,

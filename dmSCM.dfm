@@ -6,6 +6,8 @@ object SCM: TSCM
     Params.Strings = (
       'ConnectionDef=MSSQL_SwimClubMeet'
       'LoginTimeout=0')
+    ConnectedStoredUsage = [auDesignTime]
+    Connected = True
     LoginPrompt = False
     Left = 64
     Top = 24
@@ -99,6 +101,7 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'EntrantID;HeatID'
     MasterSource = dsLane
     MasterFields = 'EntrantID'
@@ -146,6 +149,9 @@ object SCM: TSCM
       '        , '#39' '#39
       '        , Upper(Member.LastName)'
       '        ) AS HeatNumLaneFNameStr'
+      '        '
+      '    , Upper(Member.LastName) AS LastNameStr'
+      '    '
       'FROM Entrant'
       'INNER JOIN HeatIndividual'
       '    ON Entrant.HeatID = HeatIndividual.HeatID'
@@ -232,6 +238,12 @@ object SCM: TSCM
       Required = True
       Size = 4000
     end
+    object qryEntrantLastNameStr: TWideStringField
+      FieldName = 'LastNameStr'
+      Origin = 'LastNameStr'
+      ReadOnly = True
+      Size = 128
+    end
   end
   object dsEntrant: TDataSource
     DataSet = qryEntrant
@@ -240,6 +252,7 @@ object SCM: TSCM
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
+    Active = True
     IndexFieldNames = 'SwimClubID'
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
@@ -271,7 +284,7 @@ object SCM: TSCM
         '     , FORMAT(SessionStart, '#39'dddd dd/MM/yyyy HH:mm'#39') AS SessionS' +
         'tartStr'
       '     , CONCAT('
-      '                 FORMAT(SessionStart, '#39'dddd dd/MM/yyyy HH:mm'#39')'
+      '                 FORMAT(SessionStart, '#39'yyyy-MM-dd HH:mm'#39')'
       
         '               , IIF(Session.SessionStatusID = 1, '#39' '#39', '#39' (LOCKED' +
         ') '#39')'
