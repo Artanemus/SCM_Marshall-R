@@ -302,6 +302,7 @@
         <DCCReference Include="..\x-superobject\XSuperJSON.pas"/>
         <DCCReference Include="..\x-superobject\XSuperObject.pas"/>
         <DCCReference Include="ProgramSetting.pas"/>
+        <DCCReference Include="DCode.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

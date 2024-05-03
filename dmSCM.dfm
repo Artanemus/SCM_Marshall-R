@@ -101,7 +101,6 @@ object SCM: TSCM
   end
   object qryEntrant: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'EntrantID;HeatID'
     MasterSource = dsLane
     MasterFields = 'EntrantID'
@@ -252,7 +251,6 @@ object SCM: TSCM
   end
   object qrySession: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    Active = True
     IndexFieldNames = 'SwimClubID'
     MasterSource = dsSwimClub
     MasterFields = 'SwimClubID'
@@ -785,52 +783,48 @@ object SCM: TSCM
   end
   object qryQualifyState: TFDQuery
     ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'HeatID;EntrantID'
+    IndexFieldNames = 'EntrantID'
+    MasterSource = dsEntrant
+    MasterFields = 'EntrantID'
+    DetailFields = 'EntrantID'
     Connection = scmConnection
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
     UpdateOptions.EnableUpdate = False
+    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.DisqualifyCode'
+    UpdateOptions.KeyFields = 'DisqualifyCodeID'
     SQL.Strings = (
       'USE [SwimClubMeet]'
       ';'
       ''
-      'DECLARE @EntrantID as Integer;'
-      'DECLARE @HeatID as Integer;'
+      '--DECLARE @EntrantID as Integer;'
+      '--DECLARE @HeatID as Integer;'
       ''
-      'SET @EntrantID = :ENTRANTID;'
-      'SET @HeatID = :HEATID;'
+      '--SET @EntrantID = :ENTRANTID;'
+      '--SET @HeatID = :HEATID;'
       ''
       ''
-      'SELECT [EntrantID]'
-      '      ,[HeatID]'
-      '      ,[IsDisqualified]'
-      '      ,[IsScratched]'
+      'SELECT Entrant.[EntrantID]'
+      '      ,Entrant.[HeatID]'
+      '      ,Entrant.[IsDisqualified]'
+      '      ,Entrant.[IsScratched]'
       #9'  , case '
       #9#9'when [IsDisqualified] = 1 and [IsScratched] = 0 then 2'
       #9#9'when [IsDisqualified] = 0 and [IsScratched] = 1 then 3'
       #9#9'else 1'
       #9#9'end as QualifyState'
-      ''
+      '      ,Entrant.DisqualifyCodeID'
+      '      ,DisqualifyCode.ABREV'
       '  FROM [dbo].[Entrant]'
-      '  WHERE [EntrantID] = @EntrantID AND [HeatID] = @HeatID;'
+      
+        '  LEFT JOIN DisqualifyCode ON Entrant.DisqualifyCodeID = Disqual' +
+        'ifyCode.DisqualifyCodeID '
+      ' -- WHERE [EntrantID] = @EntrantID AND [HeatID] = @HeatID;'
       ''
       ';')
     Left = 248
-    Top = 120
-    ParamData = <
-      item
-        Name = 'ENTRANTID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = Null
-      end
-      item
-        Name = 'HEATID'
-        DataType = ftInteger
-        ParamType = ptInput
-        Value = Null
-      end>
+    Top = 504
     object qryQualifyStateEntrantID: TFDAutoIncField
       FieldName = 'EntrantID'
       Origin = 'EntrantID'
@@ -854,6 +848,15 @@ object SCM: TSCM
       Origin = 'QualifyState'
       ReadOnly = True
       Required = True
+    end
+    object qryQualifyStateDisqualifyCodeID: TIntegerField
+      FieldName = 'DisqualifyCodeID'
+      Origin = 'DisqualifyCodeID'
+    end
+    object qryQualifyStateABREV: TWideStringField
+      FieldName = 'ABREV'
+      Origin = 'ABREV'
+      Size = 16
     end
   end
   object qrySCMSystem: TFDQuery
@@ -890,5 +893,91 @@ object SCM: TSCM
     DataSet = qrySCMSystem
     Left = 312
     Top = 264
+  end
+  object tblDisqualifyCode: TFDTable
+    IndexFieldNames = 'DisqualifyCodeID'
+    Connection = scmConnection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
+    UpdateOptions.EnableDelete = False
+    UpdateOptions.EnableInsert = False
+    UpdateOptions.EnableUpdate = False
+    TableName = 'SwimClubMeet.dbo.DisqualifyCode'
+    Left = 248
+    Top = 344
+    object tblDisqualifyCodeDisqualifyCodeID: TFDAutoIncField
+      FieldName = 'DisqualifyCodeID'
+      Origin = 'DisqualifyCodeID'
+    end
+    object tblDisqualifyCodeCaption: TWideStringField
+      FieldName = 'Caption'
+      Origin = 'Caption'
+      Size = 128
+    end
+    object tblDisqualifyCodeABREV: TWideStringField
+      FieldName = 'ABREV'
+      Origin = 'ABREV'
+      Size = 16
+    end
+    object tblDisqualifyCodeDisqualifyTypeID: TIntegerField
+      FieldName = 'DisqualifyTypeID'
+      Origin = 'DisqualifyTypeID'
+    end
+  end
+  object FDQuery1: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = scmConnection
+    SQL.Strings = (
+      'USE SwimClubMeet;'
+      ''
+      'DECLARE @DisqualifyTypeID AS INTEGER;'
+      ''
+      'SET @DisqualifyTypeID = :DISQUALIFYTYPEID'
+      ''
+      'SELECT [DisqualifyCodeID]'
+      '     , [DisqualifyCode].[Caption] AS DCodeStr'
+      '     , ABREV'
+      '     , [DisqualifyType].[DisqualifyTypeID]'
+      '     , [DisqualifyType].[Caption] AS TypeStr'
+      'FROM DisqualifyCode'
+      '    LEFT JOIN DisqualifyType'
+      
+        '        ON [DisqualifyCode].[DisqualifyTypeID] = [DisqualifyType' +
+        '].[DisqualifyTypeID]'
+      'WHERE [DisqualifyCode].[DisqualifyTypeID] = @DisqualifyTypeID'
+      '      OR [DisqualifyCode].[DisqualifyTypeID] = 1'
+      '      OR [DisqualifyCode].[DisqualifyTypeID] = 8'
+      'ORDER BY [DisqualifyCode].[DisqualifyTypeID];')
+    Left = 280
+    Top = 56
+    ParamData = <
+      item
+        Name = 'DISQUALIFYTYPEID'
+        ParamType = ptInput
+      end>
+  end
+  object FDQuery2: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
+    Connection = scmConnection
+    SQL.Strings = (
+      'USE  SwimClubMeet ;'
+      ''
+      'DECLARE @EntrantID AS INTEGER;'
+      'SET @EntrantID = :ENTRANTID;'
+      ''
+      'SELECT [Event].StrokeID, [Stroke].Caption FROM dbo.Entrant'
+      
+        'INNER JOIN HeatIndividual ON  Entrant.HeatID = HeatIndividual.He' +
+        'atID'
+      'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID'
+      'INNER JOIN [Stroke] ON [Event].StrokeID = [Stroke].StrokeID'
+      'WHERE Entrant.EntrantID = @EntrantID;')
+    Left = 280
+    Top = 120
+    ParamData = <
+      item
+        Name = 'ENTRANTID'
+        ParamType = ptInput
+      end>
   end
 end

@@ -10,7 +10,7 @@ uses
   FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.Client,
   FireDAC.Comp.DataSet, System.Variants, System.IniFiles, System.IOUtils,
   Data.Bind.EngExt, Fmx.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
-  Data.Bind.Components, Data.Bind.DBScope;
+  Data.Bind.Components, Data.Bind.DBScope, Data.FMTBcd, Data.SqlExpr;
 
 type
   TSCM = class(TDataModule)
@@ -118,6 +118,15 @@ type
     qryEntrantQualifiedStatus: TStringField;
     qryEntrantHeatNumLaneFNameStr: TWideStringField;
     qryEntrantLastNameStr: TWideStringField;
+    qryQualifyStateDisqualifyCodeID: TIntegerField;
+    tblDisqualifyCode: TFDTable;
+    tblDisqualifyCodeDisqualifyCodeID: TFDAutoIncField;
+    tblDisqualifyCodeCaption: TWideStringField;
+    tblDisqualifyCodeABREV: TWideStringField;
+    tblDisqualifyCodeDisqualifyTypeID: TIntegerField;
+    qryQualifyStateABREV: TWideStringField;
+    FDQuery1: TFDQuery;
+    FDQuery2: TFDQuery;
     procedure qryHeatAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -143,7 +152,9 @@ type
     function LocateEventID(EventID: Integer): Boolean;
     function LocateLaneNum(LaneNum: Integer): Boolean;
     function LocateLaneID(LaneID: Integer): Boolean;
+    function LocateQualifyCode(ACodeStr: string): Boolean;
     function GetQualifyState(EntrantID, HeatID: Integer): Integer;
+
     // 2023.3.10
     function GetDBVerInfo: string;
 
@@ -219,10 +230,9 @@ end;
 procedure TSCM.DataModuleCreate(Sender: TObject);
 begin
   // make sure the there isn't an active connection
+  scmConnection.Connected := false;
   FIsActive := false;
-//  scmConnection.Connected := true;
-//  if scmConnection.Connected then
-//    ActivateTable;
+
 end;
 
 procedure TSCM.DeActivateTable;
@@ -295,6 +305,26 @@ begin
 end;
 
 {$REGION 'LOCATE SPECIFIC RECORD'}
+
+function TSCM.LocateQualifyCode(ACodeStr: string): Boolean;
+var
+  LocateSuccess: Boolean;
+  SearchOptions: TLocateOptions;
+begin
+  Result := false;
+  if (ACodeStr = '')  then exit;
+  if not tblDisqualifyCode.Active then
+    exit;
+  SearchOptions := [loPartialKey];
+  try
+    LocateSuccess := tblDisqualifyCode.Locate('ABREV', VarArrayOf([ACodeStr]),
+      SearchOptions);
+  except
+    on E: Exception do
+      LocateSuccess := false
+  end;
+  Result := LocateSuccess;
+end;
 
 function TSCM.LocateEntrantID(EntrantID, HeatID: Integer): Boolean;
 var
