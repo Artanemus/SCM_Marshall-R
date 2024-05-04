@@ -136,7 +136,7 @@ object SCM: TSCM
       #9',CASE '
       #9#9'WHEN Entrant.IsDisqualified = 1 THEN '#39'DISQUALIFIED'#39
       #9#9'WHEN Entrant.IsScratched = 1 THEN '#39'SCRATCHED'#39' '
-      #9#9'ELSE '#39'QUALIFIED'#39
+      #9#9'ELSE '#39#39
       #9#9'END'
       #9#9#9'as QualifiedStatus'
       ''
@@ -150,13 +150,18 @@ object SCM: TSCM
       '        ) AS HeatNumLaneFNameStr'
       '        '
       '    , Upper(Member.LastName) AS LastNameStr'
+      '    , Entrant.DisqualifyCodeID'
+      '    , DisqualifyCode.ABREV'
       '    '
       'FROM Entrant'
       'INNER JOIN HeatIndividual'
       '    ON Entrant.HeatID = HeatIndividual.HeatID'
       'LEFT OUTER JOIN Member'
       '    ON Entrant.MemberID = Member.MemberID'
-      'ORDER BY Entrant.Lane')
+      
+        'LEFT JOIN DisqualifyCode ON Entrant.DisqualifyCodeID = Disqualif' +
+        'yCode.DisqualifyCodeID'
+      'ORDER BY Entrant.Lane ')
     Left = 40
     Top = 506
     object qryEntrantEntrantID: TFDAutoIncField
@@ -243,6 +248,15 @@ object SCM: TSCM
       ReadOnly = True
       Size = 128
     end
+    object qryEntrantDisqualifyCodeID: TIntegerField
+      FieldName = 'DisqualifyCodeID'
+      Origin = 'DisqualifyCodeID'
+    end
+    object qryEntrantABREV: TWideStringField
+      FieldName = 'ABREV'
+      Origin = 'ABREV'
+      Size = 16
+    end
   end
   object dsEntrant: TDataSource
     DataSet = qryEntrant
@@ -286,7 +300,9 @@ object SCM: TSCM
       
         '               , IIF(Session.SessionStatusID = 1, '#39' '#39', '#39' (LOCKED' +
         ') '#39')'
-      '               , [Session].Caption'
+      
+        '               , IIF(Session.SessionStatusID = 1, [Session].Capt' +
+        'ion, '#39#39')'
       '             ) AS SessionDetailStr'
       'FROM Session'
       ''
@@ -446,7 +462,7 @@ object SCM: TSCM
     UpdateOptions.UpdateTableName = 'SwimClubMeet..Event'
     UpdateOptions.KeyFields = 'EventID'
     SQL.Strings = (
-      'USE SwimClubMeet'
+      'USE SwimClubMeet;'
       ''
       'SELECT Event.EventID'
       '    , Event.EventNum'
@@ -479,14 +495,13 @@ object SCM: TSCM
       '        , EntrantCount'
       '        , '#39')'#39
       '        ) AS ListDetailStr'
+      ',[Distance].EventTypeID'
       ''
       'FROM Event'
       'LEFT OUTER JOIN Stroke'
       '    ON Stroke.StrokeID = Event.StrokeID'
       'LEFT OUTER JOIN Distance'
       '    ON Distance.DistanceID = Event.DistanceID'
-      'LEFT OUTER JOIN EventStatus'
-      '    ON EventStatus.EventStatusID = Event.EventStatusID'
       'LEFT JOIN ('
       '    SELECT Count(Nominee.EventID) AS NomineeCount'
       '        , EventID'
@@ -555,6 +570,10 @@ object SCM: TSCM
       ReadOnly = True
       Required = True
       Size = 314
+    end
+    object qryEventEventTypeID: TIntegerField
+      FieldName = 'EventTypeID'
+      Origin = 'EventTypeID'
     end
   end
   object qryMember: TFDQuery
@@ -731,7 +750,7 @@ object SCM: TSCM
         Name = 'HEATID'
         DataType = ftInteger
         ParamType = ptInput
-        Value = 1946
+        Value = Null
       end>
     object qryLaneLaneID: TIntegerField
       FieldName = 'LaneID'
@@ -781,84 +800,6 @@ object SCM: TSCM
     Left = 112
     Top = 442
   end
-  object qryQualifyState: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    IndexFieldNames = 'EntrantID'
-    MasterSource = dsEntrant
-    MasterFields = 'EntrantID'
-    DetailFields = 'EntrantID'
-    Connection = scmConnection
-    UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
-    UpdateOptions.EnableDelete = False
-    UpdateOptions.EnableInsert = False
-    UpdateOptions.EnableUpdate = False
-    UpdateOptions.UpdateTableName = 'SwimClubMeet.dbo.DisqualifyCode'
-    UpdateOptions.KeyFields = 'DisqualifyCodeID'
-    SQL.Strings = (
-      'USE [SwimClubMeet]'
-      ';'
-      ''
-      '--DECLARE @EntrantID as Integer;'
-      '--DECLARE @HeatID as Integer;'
-      ''
-      '--SET @EntrantID = :ENTRANTID;'
-      '--SET @HeatID = :HEATID;'
-      ''
-      ''
-      'SELECT Entrant.[EntrantID]'
-      '      ,Entrant.[HeatID]'
-      '      ,Entrant.[IsDisqualified]'
-      '      ,Entrant.[IsScratched]'
-      #9'  , case '
-      #9#9'when [IsDisqualified] = 1 and [IsScratched] = 0 then 2'
-      #9#9'when [IsDisqualified] = 0 and [IsScratched] = 1 then 3'
-      #9#9'else 1'
-      #9#9'end as QualifyState'
-      '      ,Entrant.DisqualifyCodeID'
-      '      ,DisqualifyCode.ABREV'
-      '  FROM [dbo].[Entrant]'
-      
-        '  LEFT JOIN DisqualifyCode ON Entrant.DisqualifyCodeID = Disqual' +
-        'ifyCode.DisqualifyCodeID '
-      ' -- WHERE [EntrantID] = @EntrantID AND [HeatID] = @HeatID;'
-      ''
-      ';')
-    Left = 248
-    Top = 504
-    object qryQualifyStateEntrantID: TFDAutoIncField
-      FieldName = 'EntrantID'
-      Origin = 'EntrantID'
-    end
-    object qryQualifyStateHeatID: TIntegerField
-      FieldName = 'HeatID'
-      Origin = 'HeatID'
-    end
-    object qryQualifyStateIsDisqualified: TBooleanField
-      FieldName = 'IsDisqualified'
-      Origin = 'IsDisqualified'
-      Required = True
-    end
-    object qryQualifyStateIsScratched: TBooleanField
-      FieldName = 'IsScratched'
-      Origin = 'IsScratched'
-      Required = True
-    end
-    object qryQualifyStateQualifyState: TIntegerField
-      FieldName = 'QualifyState'
-      Origin = 'QualifyState'
-      ReadOnly = True
-      Required = True
-    end
-    object qryQualifyStateDisqualifyCodeID: TIntegerField
-      FieldName = 'DisqualifyCodeID'
-      Origin = 'DisqualifyCodeID'
-    end
-    object qryQualifyStateABREV: TWideStringField
-      FieldName = 'ABREV'
-      Origin = 'ABREV'
-      Size = 16
-    end
-  end
   object qrySCMSystem: TFDQuery
     ActiveStoredUsage = [auDesignTime]
     Connection = scmConnection
@@ -894,41 +835,15 @@ object SCM: TSCM
     Left = 312
     Top = 264
   end
-  object tblDisqualifyCode: TFDTable
+  object qryDCode: TFDQuery
+    ActiveStoredUsage = [auDesignTime]
     IndexFieldNames = 'DisqualifyCodeID'
     Connection = scmConnection
-    ResourceOptions.AssignedValues = [rvEscapeExpand]
     UpdateOptions.AssignedValues = [uvEDelete, uvEInsert, uvEUpdate]
     UpdateOptions.EnableDelete = False
     UpdateOptions.EnableInsert = False
     UpdateOptions.EnableUpdate = False
-    TableName = 'SwimClubMeet.dbo.DisqualifyCode'
-    Left = 248
-    Top = 344
-    object tblDisqualifyCodeDisqualifyCodeID: TFDAutoIncField
-      FieldName = 'DisqualifyCodeID'
-      Origin = 'DisqualifyCodeID'
-    end
-    object tblDisqualifyCodeCaption: TWideStringField
-      FieldName = 'Caption'
-      Origin = 'Caption'
-      Size = 128
-    end
-    object tblDisqualifyCodeABREV: TWideStringField
-      FieldName = 'ABREV'
-      Origin = 'ABREV'
-      Size = 16
-    end
-    object tblDisqualifyCodeDisqualifyTypeID: TIntegerField
-      FieldName = 'DisqualifyTypeID'
-      Origin = 'DisqualifyTypeID'
-    end
-  end
-  object FDQuery1: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = scmConnection
     SQL.Strings = (
-      'USE SwimClubMeet;'
       ''
       'DECLARE @DisqualifyTypeID AS INTEGER;'
       ''
@@ -953,31 +868,37 @@ object SCM: TSCM
     ParamData = <
       item
         Name = 'DISQUALIFYTYPEID'
+        DataType = ftInteger
         ParamType = ptInput
+        Value = Null
       end>
+    object qryDCodeDisqualifyCodeID: TFDAutoIncField
+      FieldName = 'DisqualifyCodeID'
+      Origin = 'DisqualifyCodeID'
+    end
+    object qryDCodeDCodeStr: TWideStringField
+      FieldName = 'DCodeStr'
+      Origin = 'DCodeStr'
+      Size = 128
+    end
+    object qryDCodeABREV: TWideStringField
+      FieldName = 'ABREV'
+      Origin = 'ABREV'
+      Size = 16
+    end
+    object qryDCodeDisqualifyTypeID: TFDAutoIncField
+      FieldName = 'DisqualifyTypeID'
+      Origin = 'DisqualifyTypeID'
+    end
+    object qryDCodeTypeStr: TWideStringField
+      FieldName = 'TypeStr'
+      Origin = 'TypeStr'
+      Size = 128
+    end
   end
-  object FDQuery2: TFDQuery
-    ActiveStoredUsage = [auDesignTime]
-    Connection = scmConnection
-    SQL.Strings = (
-      'USE  SwimClubMeet ;'
-      ''
-      'DECLARE @EntrantID AS INTEGER;'
-      'SET @EntrantID = :ENTRANTID;'
-      ''
-      'SELECT [Event].StrokeID, [Stroke].Caption FROM dbo.Entrant'
-      
-        'INNER JOIN HeatIndividual ON  Entrant.HeatID = HeatIndividual.He' +
-        'atID'
-      'INNER JOIN [Event] ON HeatIndividual.EventID = [Event].EventID'
-      'INNER JOIN [Stroke] ON [Event].StrokeID = [Stroke].StrokeID'
-      'WHERE Entrant.EntrantID = @EntrantID;')
-    Left = 280
-    Top = 120
-    ParamData = <
-      item
-        Name = 'ENTRANTID'
-        ParamType = ptInput
-      end>
+  object dsDCode: TDataSource
+    DataSet = qryDCode
+    Left = 352
+    Top = 56
   end
 end

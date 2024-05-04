@@ -82,7 +82,6 @@ type
     chkbUseFINAcodes: TCheckBox;
     chkbUseOSAuthentication: TCheckBox;
     cmbSessionList: TComboBox;
-    edtFINAcodes: TEdit;
     edtPassword: TEdit;
     edtServerName: TEdit;
     edtUser: TEdit;
@@ -158,7 +157,11 @@ type
     Timer1: TTimer;
     imgListMain: TImageList;
     bsQualifyState: TBindSourceDB;
-    LinkPropertyToFieldText: TLinkPropertyToField;
+    cmbDCode: TComboBox;
+    bsDCode: TBindSourceDB;
+    LinkListControlToField1: TLinkListControlToField;
+    btnClear: TButton;
+    actnClearDCode: TAction;
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);
     procedure actnDisconnectExecute(Sender: TObject);
@@ -173,6 +176,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BigButtonClick(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
     procedure ListViewEventChange(Sender: TObject);
     procedure ListViewHeatChange(Sender: TObject);
     procedure ListViewLaneChange(Sender: TObject);
@@ -190,13 +194,16 @@ type
     // Universal platform - Program Settings
     procedure LoadFromSettings;
     procedure LoadSettings;
-    procedure PostFINAcode(AbreviationStr: string);
+    procedure PostFINAcode(ADisqualifyCodeID: integer);
     procedure PostSimplifiied(AQualifyStatus: Integer);
     procedure SaveToSettings;
     procedure SetBigButtonsEffect(btnTag: Integer);
     procedure Update_TabSheetCaptions;
     procedure Update_Layout;
     procedure Update_SessionsVisible;
+    procedure Update_DCode;
+
+    function TransposeStrokeIDtoDisqualifyTypeID(AStrokeID: integer): integer;
   public
     { Public declarations }
     procedure Refresh_BigButtons;
@@ -347,7 +354,7 @@ begin
       // routine will post and display a status message
       // uses ExeSQL
       if chkbUseFINAcodes.IsChecked then
-        PostFINAcode(edtFINAcodes.Text)
+        PostFINAcode(bsDCode.DataSet.FieldByName('DisqualifyCodeID').AsInteger)
       else
         PostSimplifiied(GetBigButtonsEffect);
 
@@ -433,8 +440,11 @@ begin
       tabFINAcodes.Visible := true;
     if not layFINAcode.Visible then
       layFINAcode.Visible := true;
-    if not edtFINAcodes.Visible then
-      edtFINAcodes.Visible := true;
+    if not cmbDCode.Visible then
+      cmbDCode.Visible := true;
+    if not btnClear.Visible then
+      btnClear.Visible := true;
+
     // display FINA tab-sheet
     if not tabFINAcodes.Visible then
       tabFINAcodes.Visible := true;
@@ -453,8 +463,11 @@ begin
       tabFINAcodes.Visible := false;
     if layFINAcode.Visible then
       layFINAcode.Visible := false;
-    if edtFINAcodes.Visible then
-      edtFINAcodes.Visible := false;
+    if cmbDCode.Visible then
+      cmbDCode.Visible := false;
+    if btnClear.Visible then
+      btnClear.Visible := false;
+
     // hide FINA tab-sheet
     if tabFINAcodes.Visible then
       tabFINAcodes.Visible := true;
@@ -547,6 +560,8 @@ begin
       bsEntrant.DataSet := SCM.qryEntrant;
     if not Assigned(bsLane.DataSet) then
       bsLane.DataSet := SCM.qryLane;
+    if not Assigned(bsDCode.DataSet) then
+      bsDCode.DataSet := SCM.qryDCode;
   end;
 
   if not SCM.scmConnection.Connected then
@@ -656,9 +671,19 @@ begin
   SetBigButtonsEffect(TImage(Sender).Tag)
 end;
 
+procedure TMarshall.btnClearClick(Sender: TObject);
+begin
+  if (Assigned(SCM) and SCM.IsActive) then
+  begin
+    PostFINAcode(0);
+    Refresh_Lane;
+  end
+end;
+
 procedure TMarshall.ListViewEventChange(Sender: TObject);
 begin
   Update_TabSheetCaptions;
+  Update_DCode;
 end;
 
 procedure TMarshall.ListViewHeatChange(Sender: TObject);
@@ -746,6 +771,36 @@ begin
   lblAniIndicatorStatus.Text := 'Connecting ' + IntToStr(fConnectionCountdown);
 end;
 
+function TMarshall.TransposeStrokeIDtoDisqualifyTypeID(
+  AStrokeID: integer): integer;
+var
+j: integer;
+begin
+  j := 0;
+  if (AStrokeID < 7) then
+  begin
+      // TRANSPOSE SCM STROKE TO FINA'S STROKE TYPE ID
+      case AStrokeID of
+        1:
+          j := 2; // FS
+        2:
+          j := 4; // BS
+        3:
+          j := 3; // BK
+        4:
+          j := 5; // BF
+        5:
+          j := 6; // IM
+      end;
+  end
+  else
+  begin
+    // init Group 1 SWIMMING STROKE
+    j := 7; // RELAY
+  end;
+  result := j;
+end;
+
 procedure TMarshall.Update_TabSheetCaptions;
 begin
   if Assigned(SCM) and SCM.scmConnection.Connected then
@@ -812,91 +867,105 @@ begin
     result := 3;
 end;
 
-procedure TMarshall.PostFINAcode(AbreviationStr: string);
+procedure TMarshall.PostFINAcode(ADisqualifyCodeID: integer);
 var
-  FoundIt: boolean;
-  sl: TStringList;
-  EntrantID, codeID: Integer;
+  EntrantID, EventTypeID, rowsEffected: Integer;
+  SQL: String;
+  IsScratched, IsDisqualified: boolean;
 begin
   if not Assigned(SCM) then
     exit;
   if not SCM.IsActive then
     exit;
+
+//  if (SCM.qryLane.FieldByName('EntrantID').IsNull) then  exit;
+//  if (SCM.qryLane.FieldByName('EntrantID').AsInteger = 0) then exit;
+
   // Note: only 'OPEN' heats can be modified ...
   if not(SCM.qryHeat.FieldByName('HeatStatusID').AsInteger = 1) then
-    exit;
-  // Only unloced sessions can be modified ...
-  if not(SCM.qrySession.FieldByName('SessionStatusID').AsInteger = 1) then
-    exit;
-  // check table is active
-  if not SCM.tblDisqualifyCode.Active then
-    SCM.tblDisqualifyCode.Open;
-  If SCM.tblDisqualifyCode.Active then
   begin
-    EntrantID := SCM.qryLane.FieldByName('EntrantID').AsInteger;
-    // if the string is empty then 'QUALIFY ENTRANT'
-    if AbreviationStr.IsNullOrWhiteSpace(AbreviationStr) THEN
-    BEGIN
-      sl := TStringList.Create;
-      sl.Add('USE [SwimClubMeet];');
-      sl.Add('SET NOCOUNT ON;');
-      sl.Add('Update[dbo].[Entrant] SET');
-      sl.Add(' [IsDisqualified] = 0');
-      sl.Add(',[IsScratched] = 0');
-      sl.Add(',[DisqualifyCodeID] = NULL ');
-      sl.Add('WHERE EntrantID = ' + IntToStr(EntrantID));
-      sl.Add(';');
-      try
-        try
-          SCM.scmConnection.ExecSQL(sl.Text);
-          lblConnectionStatus.Text := 'INFO: The Qualify Status was posted.';
-        except
-          on E: Exception do
-          begin
-            lblConnectionStatus.Text :=
-              'Error: Unable to post to the SCM database!'
-          end;
-        end;
-      finally
-        sl.Free;
-      end;
-    END
-    ELSE
-    BEGIN
-      // find the first match 'LIKE'
-      FoundIt := SCM.LocateQualifyCode(AbreviationStr);
-      codeID := SCM.tblDisqualifyCode.FieldByName('DisqualifyCodeID').AsInteger;
-      if FoundIt then
-      begin
-        sl := TStringList.Create;
-        sl.Add('USE [SwimClubMeet];');
-        sl.Add('SET NOCOUNT ON;');
-        sl.Add('Update[dbo].[Entrant] SET');
-        sl.Add(' [IsDisqualified] = 1');
-        sl.Add(',[IsScratched] = 0');
-        sl.Add(',[DisqualifyCodeID] = ' + IntToStr(codeID));
-        sl.Add('WHERE EntrantID = ' + IntToStr(EntrantID));
-        sl.Add(';');
-        try
-          try
-            SCM.scmConnection.ExecSQL(sl.Text);
-            lblConnectionStatus.Text := 'INFO: The Qualify Status was posted.';
-          except
-            on E: Exception do
-            begin
-              lblConnectionStatus.Text :=
-                'Error: Unable to post to the SCM database!'
-            end;
-          end;
-        finally
-          sl.Free;
-        end;
-      end
-      else
-        lblConnectionStatus.Text :=
-          'Error: Unknown FINA code. Check entered text.'
+    lblConnectionStatus.Text :=
+          'INFO: Only ''OPEN'' heats can be modified.';
+    exit;
+  end;
+  // Only unlocked sessions can be modified ...
+  if not(SCM.qrySession.FieldByName('SessionStatusID').AsInteger = 1) then
+  begin
+    lblConnectionStatus.Text :=
+          'INFO: Locked sessions cannot be modified.';
+    exit;
+  end;
+
+  // I N I T   P A R A M S  .
+  EventTypeID := bsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
+  EntrantID := bsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
+  rowsEffected := 0;
+
+
+
+  if (ADisqualifyCodeID > 0) then
+  begin
+    // "Simplified Disqualification Schema" :DEFAULT INIT
+    // SCMb - Unspecified disqualification.
+    IsScratched := false;
+    IsDisqualified := true;
+    // "Simplified Disqualification Schema"
+    // SCMa - Swimmer didn't show for event. Scratched
+    if ADisqualifyCodeID = 53 then
+    begin
+      IsScratched := true;
+      IsDisqualified := false;
     end;
-  END
+    if (EventTypeID = 1) then // INDIVIDUAL EVENT
+    begin
+      SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+        ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
+        ' [IsDisqualified] = :ID3 WHERE [Entrant].EntrantID = :ID4;';
+      rowsEffected := SCM.scmConnection.ExecSQL(SQL,
+        [ADisqualifyCodeID, IsScratched, IsDisqualified, EntrantID],
+        [ftInteger, ftBoolean, ftBoolean, ftInteger]);
+
+    end
+    else if (EventTypeID = 2) then // TEAM EVENT
+    begin
+      // team events not enabled ....
+      {
+        SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+        ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
+        ' [IsDisqualified] = :ID3 WHERE [Team].TeamID = :ID4;';
+        SCM.scmConnection.ExecSQL(SQL, [ADisqualifyCodeID, IsScratched, IsDisqualified, fTeamID],
+        [ftInteger, ftBoolean, ftBoolean, ftInteger]);
+      }
+    end;
+  end;
+
+  if (ADisqualifyCodeID = 0) then
+  begin
+    if (EventTypeID = 1) then // INDIVIDUAL EVENT
+    begin
+      SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
+        ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
+        ' [IsDisqualified] = 0 WHERE [Entrant].EntrantID = :ID4;';
+      rowsEffected := SCM.scmConnection.ExecSQL(SQL, [EntrantID], [ftInteger]);
+    end
+    else if (EventTypeID = 2) then // TEAM EVENT
+    begin
+      // team events not enabled ....
+      {
+        SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+        ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
+        ' [IsDisqualified] = 0 WHERE [Team].TeamID = :ID4;';
+        SCM.scmConnection.ExecSQL(SQL, [fTeamID], [ftInteger]);
+      }
+    end;
+  end;
+
+  if (rowsEffected <> 0) then
+    lblConnectionStatus.Text := 'INFO: The Qualify Status was posted.'
+  else
+    lblConnectionStatus.Text :=
+      'Error: Unable to post to the SCM database.';
+
 end;
 
 procedure TMarshall.PostSimplifiied(AQualifyStatus: Integer);
@@ -1002,6 +1071,25 @@ begin
         MonochromeEffect3.Enabled := false;
       end;
   end;
+end;
+
+procedure TMarshall.Update_DCode;
+var
+DType: integer;
+begin
+  if not Assigned(SCM) then exit;
+  if not SCM.scmConnection.Connected then exit;
+  if SCM.qryDCode.Active then
+    SCM.qryDCode.Close;
+  {
+    Assignment should be via the join of dbo.StrokeID = DisqualifyType.StrokeID.
+    But this relationship in the DB model was erronously ommitted for DBv1.1.5.3
+    R E - P O P U L A T E  cmbDCode I T E M S .
+  }
+  DType := TransposeStrokeIDtoDisqualifyTypeID(bsEvent.DataSet.FieldByName('StrokeID').AsInteger);
+  SCM.qryDCode.ParamByName('DISQUALIFYTYPEID').AsInteger := DType;
+  SCM.qryDCode.Prepare;
+  SCM.qryDCode.Open;
 end;
 
 procedure TMarshall.Update_Layout;
@@ -1126,8 +1214,8 @@ end;
 
 procedure TMarshall.Refresh_BigButtons();
 var
-  EntrantID, HeatID: Integer;
   QualifyStatus: Integer;
+  qd, qs: boolean;
 begin
   // hide all the buttons
   imgBigS.Visible := false;
@@ -1139,35 +1227,32 @@ begin
   SetBigButtonsEffect(QualifyStatus);
   if (Assigned(SCM) and SCM.IsActive) then
   begin
-
+    if not SCM.qryLane.IsEmpty then
     begin
-      // empty dataset
-      if not SCM.qryLane.IsEmpty then
+      // Is there a swimmer assigned to the lane?
+      if not(SCM.qryLane.FieldByName('EntrantID').IsNull) then
       begin
-        // Is there a swimmer assigned to the lane?
-        if not(SCM.qryLane.FieldByName('EntrantID').IsNull) then
+        // DEFAULT = 1 (is qualified)
+        qd := SCM.qryEntrant.FieldByName('IsDisqualified').AsBoolean;
+        qs := SCM.qryEntrant.FieldByName('IsScratched').AsBoolean;
+        QualifyStatus := 1;
+        if (qd) then
+          QualifyStatus := 2;
+        if (qs) then
+          QualifyStatus := 3;
+        if chkbUseFINAcodes.IsChecked then // Display FINA codes..
+          lblFINAcode.Text := SCM.qryEntrant.FieldByName('ABREV').AsString
+        else
         begin
-          EntrantID := SCM.qryLane.FieldByName('EntrantID').AsInteger;
-          HeatID := SCM.qryLane.FieldByName('HeatID').AsInteger;
-          // DEFAULT = 1 (is qualified)
-          QualifyStatus := SCM.GetQualifyState(EntrantID, HeatID);
-
-          if chkbUseFINAcodes.IsChecked then
-          begin
-            // Display codes..
-
-          end
-          else
-          begin
-            // toggle the monchrome effects filter to indicate 'Qualification Status'
-            SetBigButtonsEffect(QualifyStatus);
-            imgBigTick.Visible := true;
-            imgBigD.Visible := true;
-            imgBigS.Visible := true;
-          end;
+          // toggle the monchrome effects filter to indicate 'Qualification Status'
+          SetBigButtonsEffect(QualifyStatus);
+          imgBigTick.Visible := true;
+          imgBigD.Visible := true;
+          imgBigS.Visible := true;
         end;
       end;
-    end
+    end;
+
   end;
 end;
 

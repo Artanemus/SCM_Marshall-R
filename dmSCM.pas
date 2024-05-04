@@ -50,7 +50,6 @@ type
     qryLaneEventID: TIntegerField;
     qryLaneFName: TWideStringField;
     dsLane: TDataSource;
-    qryQualifyState: TFDQuery;
     qryLaneMemberID: TIntegerField;
     qrySCMSystem: TFDQuery;
     dsSCMSystem: TDataSource;
@@ -80,11 +79,6 @@ type
     qryHeatStatusStr: TWideStringField;
     qryHeatHeatNumStr1: TStringField;
     qryHeatHeatNumStr2: TStringField;
-    qryQualifyStateEntrantID: TFDAutoIncField;
-    qryQualifyStateHeatID: TIntegerField;
-    qryQualifyStateIsDisqualified: TBooleanField;
-    qryQualifyStateIsScratched: TBooleanField;
-    qryQualifyStateQualifyState: TIntegerField;
     qryMemberMemberID: TFDAutoIncField;
     qryMemberMembershipNum: TIntegerField;
     qryMemberMembershipStr: TWideStringField;
@@ -118,15 +112,16 @@ type
     qryEntrantQualifiedStatus: TStringField;
     qryEntrantHeatNumLaneFNameStr: TWideStringField;
     qryEntrantLastNameStr: TWideStringField;
-    qryQualifyStateDisqualifyCodeID: TIntegerField;
-    tblDisqualifyCode: TFDTable;
-    tblDisqualifyCodeDisqualifyCodeID: TFDAutoIncField;
-    tblDisqualifyCodeCaption: TWideStringField;
-    tblDisqualifyCodeABREV: TWideStringField;
-    tblDisqualifyCodeDisqualifyTypeID: TIntegerField;
-    qryQualifyStateABREV: TWideStringField;
-    FDQuery1: TFDQuery;
-    FDQuery2: TFDQuery;
+    qryDCode: TFDQuery;
+    qryDCodeDisqualifyCodeID: TFDAutoIncField;
+    qryDCodeDCodeStr: TWideStringField;
+    qryDCodeABREV: TWideStringField;
+    qryDCodeDisqualifyTypeID: TFDAutoIncField;
+    qryDCodeTypeStr: TWideStringField;
+    dsDCode: TDataSource;
+    qryEventEventTypeID: TIntegerField;
+    qryEntrantDisqualifyCodeID: TIntegerField;
+    qryEntrantABREV: TWideStringField;
     procedure qryHeatAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
 
@@ -152,18 +147,10 @@ type
     function LocateEventID(EventID: Integer): Boolean;
     function LocateLaneNum(LaneNum: Integer): Boolean;
     function LocateLaneID(LaneID: Integer): Boolean;
-    function LocateQualifyCode(ACodeStr: string): Boolean;
-    function GetQualifyState(EntrantID, HeatID: Integer): Integer;
 
     // 2023.3.10
     function GetDBVerInfo: string;
-
     procedure FilterClosedSessions(HideClosedSessions: Boolean);
-//    procedure SimpleMakeTemporyFDConnection(Server, User, Password: String;
-//      OsAuthent: Boolean);
-//    procedure SimpleSaveSettingString(ASection, AName, AValue: String);
-//    procedure SimpleLoadSettingString(ASection, AName: String; var AValue: String);
-
     property IsActive: Boolean read FIsActive;
     property FlagLane: Boolean read FFlagLane write SetFlagLane;
   end;
@@ -194,13 +181,18 @@ begin
     qrySCMSystem.Open;
     if qrySession.Active then
     begin
-      qryQualifyState.Open;
       qryMember.Open;
       if qryMember.Active then
       begin
         qryEvent.Open; // EVENT ordered by EventNum
         if qryEvent.Active then
         begin
+          if qryDCode.Active then
+            qryDCode.Close;
+          // normally = qryEvent.StrokeID.
+          qryDCode.ParamByName('DISQUALIFYTYPEID').Clear;
+          qryDCode.Prepare;
+          qryDCode.Open;
           // LANE - USES PARAM - ACCEPTS NULL
           // qryLane must be open before qryHeat ...
           if qryLane.Active then
@@ -240,12 +232,12 @@ begin
   if qryEntrant.Active then qryEntrant.Close;
   if qryLane.Active then qryLane.Close;
   if qryHeat.Active then qryHeat.Close;
+  if qryDCode.Active then qryDCode.Close;
   if qryEvent.Active then qryEvent.Close;
   if qryMember.Active then qryMember.Close;
   if qrySession.Active then qrySession.Close;
   if tblSwimClub.Active then tblSwimClub.Close;
 
-  if qryQualifyState.Active then qryQualifyState.Close;
   if qrySCMSystem.Active then qrySCMSystem.Close;
 
   FIsActive := false;
@@ -286,45 +278,10 @@ begin
   end;
 end;
 
-function TSCM.GetQualifyState(EntrantID, HeatID: Integer): Integer;
-begin
-  // DEFAULT: the entrant passes qualification.
-  Result := 1;
-  if qryQualifyState.Active then
-    qryQualifyState.Close;
-    qryQualifyState.ParamByName('ENTRANTID').AsInteger := EntrantID;
-    qryQualifyState.ParamByName('HEATID').AsInteger  := HeatID;
-    qryQualifyState.Prepare;
-    qryQualifyState.Open;
-    if qryQualifyState.Active then
-    begin
-      if not qryQualifyState.IsEmpty then
-        Result := qryQualifyState.FieldByName('QualifyState').AsInteger;
-    end;
-    qryQualifyState.Close;
-end;
+
 
 {$REGION 'LOCATE SPECIFIC RECORD'}
 
-function TSCM.LocateQualifyCode(ACodeStr: string): Boolean;
-var
-  LocateSuccess: Boolean;
-  SearchOptions: TLocateOptions;
-begin
-  Result := false;
-  if (ACodeStr = '')  then exit;
-  if not tblDisqualifyCode.Active then
-    exit;
-  SearchOptions := [loPartialKey];
-  try
-    LocateSuccess := tblDisqualifyCode.Locate('ABREV', VarArrayOf([ACodeStr]),
-      SearchOptions);
-  except
-    on E: Exception do
-      LocateSuccess := false
-  end;
-  Result := LocateSuccess;
-end;
 
 function TSCM.LocateEntrantID(EntrantID, HeatID: Integer): Boolean;
 var
@@ -487,102 +444,5 @@ procedure TSCM.SetFlagLane(Value: Boolean);
 begin
   FFlagLane := Value;
 end;
-
-
-{$REGION 'SIMPLE TEMPORY CONNECTION AND INIFILES CONFIGURATION'}
-{
-procedure TSCM.SimpleLoadSettingString(ASection, AName: String; var AValue: String);
-var
-  ini: TIniFile;
-begin
-  // Note: OneDrive enabled: 'Personal'
-  // The routine TPath.GetDocumentsPath normally returns ...
-  // C:\Users\<username>\Documents (Windows Vista or later)
-  // but is instead mapped to C:\Users\<username>\OneDrive\Documents.
-  //
-  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
-    SCMCONFIGFILENAME);
-  try
-    AValue := ini.ReadString(ASection, AName, '');
-  finally
-    ini.Free;
-  end;
-
-end;
-
-(*
-  User_Name=Ben
-  Database=SwimClubMeet
-  OSAuthent=Yes
-  Server=localhost\SQLEXPRESS
-  DriverID=MSSQL
-  MetaDefSchema=dbo
-  ExtendedMetadata=False
-  MetaDefCatalog=
-  ApplicationName=SwimClubMeet
-  Workstation=localhost
-  MARS=yes
-  User_Name=
-  Password=*****
-  Name=MSSQL_SwimClubMeet
-*)
-
-procedure TSCM.SimpleMakeTemporyFDConnection(Server, User, Password: String;
-  OsAuthent: Boolean);
-var
-  AValue, ASection, AName: String;
-begin
-
-  if (scmConnection.Connected) then
-    scmConnection.Connected := false;
-
-  scmConnection.Params.Clear();
-  scmConnection.Params.Add('Server=' + Server);
-  scmConnection.Params.Add('DriverID=MSSQL');
-  scmConnection.Params.Add('Database=SwimClubMeet');
-  scmConnection.Params.Add('User_name=' + User);
-  scmConnection.Params.Add('Password=' + Password);
-  if OsAuthent then
-    AValue := 'Yes'
-  else
-    AValue := 'No';
-  scmConnection.Params.Add('OSAuthent=' + AValue);
-  scmConnection.Params.Add('Mars=yes');
-  scmConnection.Params.Add('MetaDefSchema=dbo');
-  scmConnection.Params.Add('ExtendedMetadata=False');
-  scmConnection.Params.Add('ApplicationName=scmMarshall');
-  scmConnection.Connected := True;
-
-  // ON SUCCESS - Save connection details.
-  if scmConnection.Connected Then
-  begin
-    ASection := 'MSSQL_SwimClubMeet';
-    AName := 'Server';
-    SimpleSaveSettingString(ASection, AName, Server);
-    AName := 'User';
-    SimpleSaveSettingString(ASection, AName, User);
-    AName := 'Password';
-    SimpleSaveSettingString(ASection, AName, Password);
-    AName := 'OSAuthent';
-    SimpleSaveSettingString(ASection, AName, AValue);
-  end
-
-end;
-
-procedure TSCM.SimpleSaveSettingString(ASection, AName, AValue: String);
-var
-  ini: TIniFile;
-begin
-  ini := TIniFile.Create(TPath.GetDocumentsPath + PathDelim +
-    SCMCONFIGFILENAME);
-  try
-    ini.WriteString(ASection, AName, AValue);
-  finally
-    ini.Free;
-  end;
-
-end;
-}
-{$ENDREGION}
 
 end.

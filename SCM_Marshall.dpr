@@ -10,8 +10,7 @@ uses
   exeinfo in '..\SCM_SHARED\exeinfo.pas',
   XSuperJSON in '..\x-superobject\XSuperJSON.pas',
   XSuperObject in '..\x-superobject\XSuperObject.pas',
-  ProgramSetting in 'ProgramSetting.pas',
-  DCode in 'DCode.pas';
+  ProgramSetting in 'ProgramSetting.pas';
 
 {$R *.res}
 
