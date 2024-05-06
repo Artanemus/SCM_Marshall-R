@@ -63,7 +63,7 @@ end;
 
 function TPrgSetting.GetDefaultSettingsFilename(): string;
 begin
-  result := TPath.Combine(GetSettingsFolder(), 'init.json');
+  result := TPath.Combine(GetSettingsFolder(), 'initMarshall.json');
 end;
 
 function TPrgSetting.GetSettingsFolder(): string;

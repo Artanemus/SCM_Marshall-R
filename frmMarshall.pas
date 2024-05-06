@@ -162,6 +162,9 @@ type
     LinkListControlToField1: TLinkListControlToField;
     btnClear: TButton;
     actnClearDCode: TAction;
+    lblSelectSwimClub: TLabel;
+    cmbSwimClubList: TComboBox;
+    LinkListControlToField2: TLinkListControlToField;
     procedure actnConnectExecute(Sender: TObject);
     procedure actnConnectUpdate(Sender: TObject);
     procedure actnDisconnectExecute(Sender: TObject);
@@ -177,6 +180,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure BigButtonClick(Sender: TObject);
     procedure btnClearClick(Sender: TObject);
+    procedure cmbSwimClubListChange(Sender: TObject);
     procedure ListViewEventChange(Sender: TObject);
     procedure ListViewHeatChange(Sender: TObject);
     procedure ListViewLaneChange(Sender: TObject);
@@ -207,6 +211,7 @@ type
   public
     { Public declarations }
     procedure Refresh_BigButtons;
+    procedure Refresh_Event;
     procedure Refresh_Entrant;
     procedure Refresh_Lane;
   end;
@@ -507,7 +512,14 @@ end;
 procedure TMarshall.cmbSessionListChange(Sender: TObject);
 begin
   if Assigned(SCM) and SCM.scmConnection.Connected then
+  begin
+    if SCM.IsActive then
+    begin
+      bsEvent.DataSet.First;
+      bsHeat.DataSet.First;
+    end;
     Update_TabSheetCaptions;
+  end;
 end;
 
 procedure TMarshall.ConnectOnTerminate(Sender: TObject);
@@ -680,6 +692,20 @@ begin
   end
 end;
 
+procedure TMarshall.cmbSwimClubListChange(Sender: TObject);
+begin
+  if Assigned(SCM) and SCM.scmConnection.Connected then
+  begin
+    if SCM.IsActive then
+    begin
+      bsSession.DataSet.First;
+      bsEvent.DataSet.First;
+      bsHeat.DataSet.First;
+    end;
+    Update_TabSheetCaptions;
+  end;
+end;
+
 procedure TMarshall.ListViewEventChange(Sender: TObject);
 begin
   Update_TabSheetCaptions;
@@ -759,6 +785,7 @@ begin
       begin
         lblConnectionStatus.Text := '';
         Refresh_Lane;
+        Update_DCode;
         // Big buttons are NOT DATA-AWARE. Refresh 'QUALIFICATION STATUS'
         Refresh_BigButtons;
       end;
@@ -878,11 +905,11 @@ begin
   if not SCM.IsActive then
     exit;
 
-//  if (SCM.qryLane.FieldByName('EntrantID').IsNull) then  exit;
-//  if (SCM.qryLane.FieldByName('EntrantID').AsInteger = 0) then exit;
+  // L A N E   I S   E M P T Y .
+  if (bsLane.DataSet.FieldByName('MemberID').IsNull) then  exit;
 
   // Note: only 'OPEN' heats can be modified ...
-  if not(SCM.qryHeat.FieldByName('HeatStatusID').AsInteger = 1) then
+  if not(bsHeat.DataSet.FieldByName('HeatStatusID').AsInteger = 1) then
   begin
     lblConnectionStatus.Text :=
           'INFO: Only ''OPEN'' heats can be modified.';
@@ -900,8 +927,6 @@ begin
   EventTypeID := bsEvent.DataSet.FieldByName('EventTypeID').AsInteger;
   EntrantID := bsEntrant.DataSet.FieldByName('EntrantID').AsInteger;
   rowsEffected := 0;
-
-
 
   if (ADisqualifyCodeID > 0) then
   begin
@@ -921,16 +946,21 @@ begin
       SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
         ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
         ' [IsDisqualified] = :ID3 WHERE [Entrant].EntrantID = :ID4;';
-      rowsEffected := SCM.scmConnection.ExecSQL(SQL,
+      SCM.scmConnection.ExecSQL(SQL,
         [ADisqualifyCodeID, IsScratched, IsDisqualified, EntrantID],
         [ftInteger, ftBoolean, ftBoolean, ftInteger]);
+
+    // TFDConnection.ExecSQL does not directly return the @@ROWCOUNT value
+    // from SQL Server.
+    rowsEffected := SCM.scmConnection.ExecSQLScalar('SELECT @@ROWCOUNT');
+    //
 
     end
     else if (EventTypeID = 2) then // TEAM EVENT
     begin
       // team events not enabled ....
       {
-        SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+        SQL := 'SET NOCOUNT OFF; UPDATE SwimClubMeet.dbo.Team SET' +
         ' [DisqualifyCodeID] = :ID1, [IsScratched] = :ID2,' +
         ' [IsDisqualified] = :ID3 WHERE [Team].TeamID = :ID4;';
         SCM.scmConnection.ExecSQL(SQL, [ADisqualifyCodeID, IsScratched, IsDisqualified, fTeamID],
@@ -946,13 +976,14 @@ begin
       SQL := 'UPDATE SwimClubMeet.dbo.Entrant SET' +
         ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
         ' [IsDisqualified] = 0 WHERE [Entrant].EntrantID = :ID4;';
-      rowsEffected := SCM.scmConnection.ExecSQL(SQL, [EntrantID], [ftInteger]);
+      SCM.scmConnection.ExecSQL(SQL, [EntrantID], [ftInteger]);
+      rowsEffected := SCM.scmConnection.ExecSQLScalar('SELECT @@ROWCOUNT');
     end
     else if (EventTypeID = 2) then // TEAM EVENT
     begin
       // team events not enabled ....
       {
-        SQL := 'UPDATE SwimClubMeet.dbo.Team SET' +
+        SQL := 'SET NOCOUNT OFF; UPDATE SwimClubMeet.dbo.Team SET' +
         ' [DisqualifyCodeID] = NULL, [IsScratched] = 0,' +
         ' [IsDisqualified] = 0 WHERE [Team].TeamID = :ID4;';
         SCM.scmConnection.ExecSQL(SQL, [fTeamID], [ftInteger]);
@@ -1209,6 +1240,24 @@ begin
     // SAFE: ZERO values.
     SCM.LocateEntrantID(EntrantID, HeatID);
     SCM.qryEntrant.EnableControls;
+  end;
+end;
+
+procedure TMarshall.Refresh_Event;
+var
+  EventID: Integer;
+begin
+  if (Assigned(SCM) and SCM.IsActive) then
+  begin
+    SCM.qryEvent.DisableControls;
+    // SAFE: if dataset is empty or no swimmer assigned, EventID will equal zero.
+    EventID := SCM.qryEvent.FieldByName('EventID').AsInteger;
+    // qryLane was trashed :: full requery required
+    SCM.qryEvent.Close;
+    SCM.qryEvent.Open;
+    // SAFE: ZERO values.
+    SCM.LocateEventID(EventID);
+    SCM.qryEvent.EnableControls;
   end;
 end;
 
