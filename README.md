@@ -42,6 +42,13 @@ Closed heats cannot be edited.
 > Use Windows **Apps and Features** to remove the application.
 
 ---
-![ScreenShot tabsheet 2.](ASSETS/Screenshot%202022-09-10%20150811.JPG)
+![ScreenShot tabsheet 1.](ASSETS/Screenshot%2024-05-06%115050.JPG)
 
-![ScreenShot tabsheet 3.](ASSETS/Screenshot%202022-09-10%20150655.JPG)
+![ScreenShot tabsheet 2.](ASSETS/Screenshot%2024-05-06%115139.JPG)
+
+![ScreenShot tabsheet 3. Simplified Disqualification](ASSETS/Screenshot%2024-05-06%115208.JPG)
+
+![ScreenShot tabsheet 3. FINA codes](ASSETS/Screenshot%2024-05-06%115245.JPG)
+
+![ScreenShot tabsheet 4. FINA Cheat-Sheet](ASSETS/Screenshot%2024-05-06%115316.JPG)
+
