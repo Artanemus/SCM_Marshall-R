@@ -1,4 +1,4 @@
-# SCM_Marshall RELEASE
+# SCM_Marshall
 
 ![Hero Marshall ICON](ASSETS/SCM_Icons_Marshall.png)
 
@@ -23,32 +23,39 @@ If you are interested in following a developer's blog and track my progress then
 
 ### THE CODE
 
-SCM_Marshall is written in Delphi, using Embarcadero's RAD Studio, version 10.4.2. This is a FMX project. Code is vanilla. No special VCL components have been used. FireDAC, which is included in the RAD studio enterprise edition, is used for database connectivity. It connects to Microsoft's SQL EXPRESS. Deployment of the application is with INNO. The deployment folder hasn't been included - I didn't want to cluttering up the repository. FYI: Database design was done in ERStudio.
+SCM_Marshall is written in Delphi, using Embarcadero's RAD Studio. This is a FMX project. Code is vanilla. No special VCL components have been used. FireDAC is used for database connectivity. Deployment of the application is with INNO. Database design was done in ERStudio.
 
 ### USING MARSHALL
 
-After install, by default, an icon is placed on the desktop. If you elected to disable this, type **mars** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
+After install, by default, an icon is placed on the desktop. If you elected to disable this, type **marshall** in the windows search bar to discover it. Else navigate to the **Artanemus** folder on the start bar. (All SCM applications and utilities are located in this folder.)
 
 ### ON START-UP
 
-The application will ask you to login to the database. If you are running on a touch-pad, bring the application to full screen - you'll notice it will zoomed (scaled up) making it easier to navigate and enter data. Currently there is no help file for this application.
+The application will ask you to login to the database. If you are running on a touch-pad, bring the application to full screen - you'll notice it will zoom (scaled up) making it easier to navigate and enter data. Currently there is no help file for this application.
+Browse the events and heats to rally your members. Large buttons let you disqualify or scratch entrants (simplified method).  If you select to use FINA codes, then pick the code from the drop-down combo-box. A FINA cheat-sheet is provided in tab-sheet 4. In either method, you must post your changes for qualification to be enacted. 
 
-Browse the events and heats to rally your members. Large buttons let you disqualify or scratch entrants. (You must post your changes for qualification to be enacted.)
-
-A special option can be enabled to immediately insert a member into an empty lane.
-
-Closed heats cannot be edited.
+Locked session or closed/raced heats cannot be edited.
 
 > Use Windows **Apps and Features** to remove the application.
 
 ---
-![ScreenShot tabsheet 1.](ASSETS/Screenshot%2024-05-06%115050.JPG)
 
-![ScreenShot tabsheet 2.](ASSETS/Screenshot%2024-05-06%115139.JPG)
+### Login, options, swim club and session selection ...
 
-![ScreenShot tabsheet 3. Simplified Disqualification](ASSETS/Screenshot%2024-05-06%115208.JPG)
+![Tab-Sheet1](https://github.com/Artanemus/SCM_Marshall-R/assets/69775305/d4d17866-da41-40bc-a195-e6c7883d94da)
 
-![ScreenShot tabsheet 3. FINA codes](ASSETS/Screenshot%2024-05-06%115245.JPG)
+### Select event and heat ...
 
-![ScreenShot tabsheet 4. FINA Cheat-Sheet](ASSETS/Screenshot%2024-05-06%115316.JPG)
+![Event-Heat Selection](https://github.com/Artanemus/SCM_Marshall-R/assets/69775305/677d2bf5-3aa6-428f-8564-434c4b62f6cd)
 
+### Rally entrants or use this screen to disqualifiy a swimmer. Here we see the simplified method of disqualification.
+
+![Simplified Disqualification method](https://github.com/Artanemus/SCM_Marshall-R/assets/69775305/5d34657d-db81-4181-a99a-c4651c882692)
+
+### This shows the FINA method of disqualification. The combo-box's drop-down reveals the FINA codes for selection.
+
+![FINA codes](https://github.com/Artanemus/SCM_Marshall-R/assets/69775305/e6f33c03-45ba-41ca-8a61-c8fab61039e2)
+
+### The cheat-sheet can be zoomed and scrolled.
+
+![Fina Cheat Sheet](https://github.com/Artanemus/SCM_Marshall-R/assets/69775305/00f65c2a-a72d-47ea-91e9-5600bdd1c008)
