@@ -726,8 +726,11 @@ begin
   // Big Buttons are NOT DATA-AWARE : Update monochromatic effects.
   // NOTE: Big Buttons are made invisible if lane is EMPTY
   Refresh_BigButtons;
+
   // ASSERT the button state for 'Post Qualify Status'
-  actnQualifyUpdate(Self);
+  // THIS DOESN'T WORK SHOULD BE
+  // ....... actnQualifyUpdate(Self);
+  UpdateAction(actnQualify);
 
   Update_TabSheetCaptions;
 
