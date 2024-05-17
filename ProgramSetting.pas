@@ -77,7 +77,7 @@ begin
 {$ELSE}
   // GETHOMEPATH = C:Users\<username>\AppData\Roaming (WINDOWS)
   // Should also work on ANDROID.
-  Result := TPath.Combine(TPath.GetHomePath(), 'Artanemus\SwimClubMeet');
+  Result := TPath.Combine(TPath.GetHomePath(), 'Artanemus\SwimClubMeet\Marshall');
 {$ENDIF}
 
 end;

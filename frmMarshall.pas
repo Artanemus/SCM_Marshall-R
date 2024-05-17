@@ -242,7 +242,7 @@ uses
 
 procedure TMarshall.actnConnectExecute(Sender: TObject);
 var
-  Thread: TThread;
+  myThread: TThread;
   sc: TSimpleConnect;
 begin
   if (Assigned(SCM) ) then
@@ -261,7 +261,7 @@ begin
 
     application.ProcessMessages;
 
-    Thread := TThread.CreateAnonymousThread(
+    myThread := TThread.CreateAnonymousThread(
       procedure
       begin
         // can only be assigned if not connected
@@ -277,8 +277,8 @@ begin
         sc.Free;
       end);
 
-    Thread.OnTerminate := ConnectOnTerminate;
-    Thread.Start;
+    myThread.OnTerminate := ConnectOnTerminate;
+    myThread.Start;
   end;
 
 end;
